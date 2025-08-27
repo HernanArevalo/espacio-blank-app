@@ -30,7 +30,7 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
 
   // Filtrar productos y ventas por tienda
   const productosActuales = productosEjemplo.filter((producto) => producto.tiendaId === tienda.id)
-  const ventasActuales = getSales()
+  const ventasActuales = getSales(tienda.id)
 
   const handleEditProduct = (productId: number) => {
     router.push(`/tienda/${tienda.id}/productos/${productId}`)
@@ -48,9 +48,9 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
           <div>
             <h2 className="text-3xl font-bold text-slate-900">{tienda.name}</h2>
             <p className="text-slate-600">{tienda.description}</p>
-            <Badge variant="outline" className="mt-1">
+            {/* <Badge variant="outline" className="mt-1">
               {user.name}
-            </Badge>
+            </Badge> */}
           </div>
         </div>
 
@@ -104,7 +104,7 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
             <TrendingUp className="h-4 w-4 text-slate-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{ventasActuales.length}</div>
+            <div className="text-2xl font-bold">{ ventasActuales.length || 0}</div>
           </CardContent>
         </Card>
 
@@ -215,7 +215,7 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
                   <TableBody>
                     {ventasActuales.map((venta) => (
                       <TableRow key={venta.id}>
-                        <TableCell>{venta.date}</TableCell>
+                        <TableCell>{new Date(venta.date).toLocaleString("es-AR")}</TableCell>
                         <TableCell>{venta.client}</TableCell>
                         <TableCell>{venta.items.length}</TableCell>
                         <TableCell>
