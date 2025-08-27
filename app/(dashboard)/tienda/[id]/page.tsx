@@ -4,7 +4,7 @@ import { useRouter, useParams } from "next/navigation"
 import { TiendaPanel } from "@/components/tienda-panel"
 import { getUser } from "@/actions/user"
 import { useSession } from "next-auth/react"
-import { getStore } from "@/actions/store/get-store"
+import { getStoreById } from "@/actions/store"
 
 export default function TiendaPage() {
   const router = useRouter()
@@ -15,7 +15,7 @@ export default function TiendaPage() {
   const user = getUser(session?.user || null)
 
 
-  const tienda = getStore(tiendaId)
+  const tienda = getStoreById(tiendaId)
   if (!tienda) {
     router.push("/")
     return null

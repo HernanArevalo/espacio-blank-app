@@ -1,6 +1,6 @@
 import { Store } from '@/interfaces';
 
-export function getStore(storeId: number): Store|undefined {
+export function getStoreById(storeId: number|string): Store|undefined {
   const stores = [
     {
       id: 2,
