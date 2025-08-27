@@ -7,7 +7,7 @@ import Providers from './providers'
 export const metadata: Metadata = {
   title: 'ESPACIO BLANK',
   description: 'Espacio Blank',
-  generator: 'v0.dev',
+  icons: "/favicon.ico"
 }
 
 export default function RootLayout({
