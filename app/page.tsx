@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-
 import { useRouter } from "next/navigation"
 
 import { Badge } from "@/components/ui/badge"
@@ -147,8 +146,8 @@ export default function HomePage() {
     )
   }
 
-  // Panel de Super Admin
-  if (showAdminPanel && user?.role === "super_admin") {
+  // Panel de Admin
+  if (showAdminPanel && user?.role === "admin") {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-6 py-8">
