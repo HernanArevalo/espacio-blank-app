@@ -10,6 +10,7 @@ import { getUser } from "@/actions/user";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Navbar() {
   const router = useRouter();
@@ -28,7 +29,9 @@ export default function Navbar() {
   return (
     <nav className="border-b bg-white px-6 py-4 shadow-sm">
       <div className="flex items-center justify-between">
-        <Image src={"/espacio-blank.png"} alt={"Espacio Blank logo"} width={50} height={50}/>
+        <Link href="/">
+          <Image src={"/espacio-blank.png"} alt={"Espacio Blank logo"} width={50} height={50}/>
+        </Link>
         {/* <div className="flex items-center space-x-4">
           <h1 className="text-2xl font-bold text-slate-900">Espacio Blank</h1>
         </div> */}
