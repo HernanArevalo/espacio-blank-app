@@ -5,7 +5,10 @@ import Providers from './providers'
 
 
 export const metadata: Metadata = {
-  title: 'ESPACIO BLANK',
+  title: {
+    default: "ESPACIO BLANK",
+    template: "%s | ESPACIO BLANK",
+  },
   description: 'Espacio Blank',
   icons: "/favicon.ico"
 }
