@@ -30,7 +30,7 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
 
   // Obtener productos de la tienda actual o seleccionada
   const tiendaParaVenta = selectedTiendaVenta || tienda.id
-  const productosActuales = GetProductsByStore()
+  const productosActuales = GetProductsByStore(tienda.id)
 
   const addToVenta = (producto: any) => {
     const existingItem = ventaItems.find((item) => item.productId === producto.productId)
