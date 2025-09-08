@@ -197,11 +197,13 @@ export const useStore = create<Store>()((set, get) => ({
       isLoggedIn: true,
     });
   },
-
+  
   handleLogout: () => {
-    get().setIsLoggedIn(false);
-    get().setShowAdminPanel(false);
-    get().setShowVentaModal(false);
-    get().setShowProductoModal(false);
+    set({
+      isLoggedIn: false,
+      showAdminPanel: false,
+      showVentaModal: false,
+      showProductoModal: false,
+    });
   },
 }));
