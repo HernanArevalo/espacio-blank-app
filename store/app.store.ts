@@ -39,9 +39,9 @@ export const useStore = create<Store>()((set, get) => ({
       description: 'Tienda para tus gafas',
       logo: '/placeholder.svg?height=100&width=100',
       discounts: {
-        card: 1,
-        transfer: 0.9,
-        cash: 0.8,
+        tarjeta: 1,
+        transferencia: 0.9,
+        efectivo: 0.8,
       },
       products: [
         {
@@ -82,9 +82,9 @@ export const useStore = create<Store>()((set, get) => ({
       description: 'Zapatos y más',
       logo: '/placeholder.svg?height=100&width=100',
       discounts: {
-        card: 1,
-        transfer: 0.9,
-        cash: 0.8,
+        tarjeta: 1,
+        transferencia: 0.9,
+        efectivo: 0.8,
       },
       products: [
         {
