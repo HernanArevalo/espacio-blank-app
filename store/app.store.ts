@@ -47,7 +47,7 @@ export const useStore = create<Store>()((set, get) => ({
       },
       products: [
         {
-          id: 101,
+          productId: 101,
           storeId: 1,
           name: 'Gafa modelo Vintage',
           description: 'Estilo retro con marco metálico',
@@ -57,7 +57,7 @@ export const useStore = create<Store>()((set, get) => ({
             'https://images.unsplash.com/photo-1549921296-3a013d2decc3?w=500&q=80',
         },
         {
-          id: 102,
+          productId: 102,
           storeId: 1,
           name: 'Gafa deportiva',
           description: 'Ideal para actividades al aire libre',
@@ -67,7 +67,7 @@ export const useStore = create<Store>()((set, get) => ({
             'https://images.unsplash.com/photo-1605089312926-d5c93a4d3b45?w=500&q=80',
         },
         {
-          id: 103,
+          productId: 103,
           storeId: 1,
           name: 'Gafa polarizada',
           description: 'Protección UV y reducción de reflejos',
@@ -90,7 +90,7 @@ export const useStore = create<Store>()((set, get) => ({
       },
       products: [
         {
-          id: 201,
+          productId: 201,
           storeId: 2,
           name: 'Zapato de cuero',
           description: 'Elegante y cómodo para uso diario',
@@ -100,7 +100,7 @@ export const useStore = create<Store>()((set, get) => ({
             'https://images.unsplash.com/photo-1600181956920-b3751c0c0b0a?w=500&q=80',
         },
         {
-          id: 202,
+          productId: 202,
           storeId: 2,
           name: 'Zapatilla urbana',
           description: 'Cómoda y liviana para ciudad',
@@ -110,7 +110,7 @@ export const useStore = create<Store>()((set, get) => ({
             'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80',
         },
         {
-          id: 203,
+          productId: 203,
           storeId: 2,
           name: 'Bota de invierno',
           description: 'Calidez y estilo para climas fríos',
@@ -131,6 +131,7 @@ export const useStore = create<Store>()((set, get) => ({
       paymentMethod: 'cash',
       items: [
         {
+          name: "Ojotas amarillas",
           productId: 4,
           quantity: 2,
           price: 15000,
@@ -138,6 +139,7 @@ export const useStore = create<Store>()((set, get) => ({
             'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GOhUXbTBGraHVj2z0UFnXvCcTRBsY_hXBg&s',
         },
         {
+          name: "Crocs Band",
           productId: 7,
           quantity: 1,
           price: 20000,
@@ -151,9 +153,10 @@ export const useStore = create<Store>()((set, get) => ({
       storeId: 2,
       date: '2025-07-16',
       total: 50000,
-      paymentMethod: 'cash',
+      paymentMethod: 'efectivo',
       items: [
         {
+          name: "Pantuflas Toy Story",
           productId: 4,
           quantity: 2,
           price: 15000,
@@ -161,6 +164,7 @@ export const useStore = create<Store>()((set, get) => ({
             'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_GOhUXbTBGraHVj2z0UFnXvCcTRBsY_hXBg&s',
         },
         {
+          name: "Bucaneras",
           productId: 7,
           quantity: 1,
           price: 20000,
