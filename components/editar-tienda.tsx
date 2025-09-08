@@ -8,33 +8,23 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ArrowLeft, Save, Trash2 } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ArrowLeft, Percent, Save, Store, Trash2 } from "lucide-react"
+
+import { Store as StoreInterface } from "@/interfaces"
 
 interface EditarTiendaProps {
-  tienda: {
-    id: number
-    nombre: string
-    imagen: string
-    descripcion: string
-  }
+  tienda: StoreInterface
 }
 
 export function EditarTienda({ tienda }: EditarTiendaProps) {
   const router = useRouter()
   const [formData, setFormData] = useState({
-    nombre: tienda.nombre,
-    descripcion: tienda.descripcion,
-    imagen: tienda.imagen,
+    name: tienda.name,
+    description: tienda.description,
+    image: tienda.image,
   })
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  // const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   const handleInputChange = (field: string, value: string) => {
@@ -49,7 +39,6 @@ export function EditarTienda({ tienda }: EditarTiendaProps) {
     // Simular guardado
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    // Aquí iría la lógica para actualizar la tienda
     console.log("Tienda actualizada:", {
       id: tienda.id,
       ...formData,
@@ -59,20 +48,7 @@ export function EditarTienda({ tienda }: EditarTiendaProps) {
     router.push("/admin")
   }
 
-  const handleDelete = async () => {
-    setIsLoading(true)
-    // Simular eliminación
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // Aquí iría la lógica para eliminar la tienda
-    console.log("Tienda eliminada:", tienda.id)
-
-    setIsLoading(false)
-    setShowDeleteDialog(false)
-    router.push("/admin")
-  }
-
-  const isFormValid = formData.nombre.trim() && formData.descripcion.trim()
+  const isFormValid = formData.name.trim() && formData.description?.trim()
 
   return (
     <div className="container mx-auto px-6 py-8">
@@ -90,31 +66,6 @@ export function EditarTienda({ tienda }: EditarTiendaProps) {
           </Button>
         </div>
         <div className="flex space-x-3">
-          <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-            <DialogTrigger asChild>
-              <Button variant="destructive" size="sm">
-                <Trash2 className="h-4 w-4 mr-2" />
-                Eliminar
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>¿Eliminar tienda?</DialogTitle>
-                <DialogDescription>
-                  Esta acción no se puede deshacer. La tienda "{tienda.nombre}" y todos sus datos serán eliminados
-                  permanentemente.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex justify-end space-x-3 mt-6">
-                <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
-                  Cancelar
-                </Button>
-                <Button variant="destructive" onClick={handleDelete} disabled={isLoading}>
-                  {isLoading ? "Eliminando..." : "Eliminar"}
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
           <Button onClick={handleSave} disabled={!isFormValid || isLoading}>
             <Save className="h-4 w-4 mr-2" />
             {isLoading ? "Guardando..." : "Guardar"}
@@ -134,8 +85,8 @@ export function EditarTienda({ tienda }: EditarTiendaProps) {
               <Label htmlFor="nombre">Nombre de la Tienda *</Label>
               <Input
                 id="nombre"
-                value={formData.nombre}
-                onChange={(e) => handleInputChange("nombre", e.target.value)}
+                value={formData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
                 placeholder="Ej: Fashion Store"
               />
             </div>
@@ -144,19 +95,19 @@ export function EditarTienda({ tienda }: EditarTiendaProps) {
               <Label htmlFor="descripcion">Descripción *</Label>
               <Textarea
                 id="descripcion"
-                value={formData.descripcion}
-                onChange={(e) => handleInputChange("descripcion", e.target.value)}
+                value={formData.description || ""}
+                onChange={(e) => handleInputChange("description", e.target.value)}
                 placeholder="Describe qué tipo de productos vende esta tienda..."
                 rows={3}
               />
             </div>
 
             <div>
-              <Label htmlFor="imagen">URL del Logo</Label>
+              <Label htmlFor="image">URL del Logo</Label>
               <Input
-                id="imagen"
-                value={formData.imagen}
-                onChange={(e) => handleInputChange("imagen", e.target.value)}
+                id="image"
+                value={formData.image}
+                onChange={(e) => handleInputChange("image", e.target.value)}
                 placeholder="https://..."
               />
             </div>
@@ -173,12 +124,12 @@ export function EditarTienda({ tienda }: EditarTiendaProps) {
             <div className="border rounded-lg p-6">
               <div className="flex items-center space-x-4 mb-4">
                 <Avatar className="w-16 h-16">
-                  <AvatarImage src={formData.imagen || "/placeholder.svg"} alt={formData.nombre} />
-                  <AvatarFallback>{formData.nombre.charAt(0) || "T"}</AvatarFallback>
+                  <AvatarImage src={formData.image || "/placeholder.svg"} alt={formData.name} />
+                  <AvatarFallback>{formData.name.charAt(0) || "T"}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="text-xl font-bold">{formData.nombre || "Nombre de la tienda"}</h3>
-                  <p className="text-slate-600">{formData.descripcion || "Descripción de la tienda"}</p>
+                  <h3 className="text-xl font-bold">{formData.name || "Nombre de la tienda"}</h3>
+                  <p className="text-slate-600">{formData.description || "Descripción de la tienda"}</p>
                 </div>
               </div>
 
@@ -199,6 +150,37 @@ export function EditarTienda({ tienda }: EditarTiendaProps) {
                 <p className="text-sm text-yellow-800">
                   <strong>Nota:</strong> Los cambios afectarán a todos los usuarios y productos asociados a esta tienda.
                 </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Store className="h-5 w-5" />
+              <span>Configuración de Descuentos</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Efectivo</Label>
+              <div className="flex items-center space-x-2">
+                <Input type="number" defaultValue="20" className="w-20" min={0} max={100}/>
+                <Percent className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Transferencia</Label>
+              <div className="flex items-center space-x-2">
+                <Input type="number" defaultValue="10" className="w-20" min={0} max={100}/>
+                <Percent className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Tarjeta</Label>
+              <div className="flex items-center space-x-2">
+                <Input type="number" defaultValue="0" className="w-20" min={0} max={100}/>
+                <Percent className="h-4 w-4" />
               </div>
             </div>
           </CardContent>
