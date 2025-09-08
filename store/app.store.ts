@@ -22,6 +22,11 @@ type Store = {
 };
 
 export const useStore = create<Store>()((set, get) => ({
+  loading: false,
+  setLoading: (value)=> {
+    set({ loading: value });
+  },
+
   user: null,
   setUser: (newUser: any) => {
     set({ user: newUser });
