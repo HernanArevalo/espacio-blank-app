@@ -8,7 +8,6 @@ import SignInButton from "./auth/sign-in";
 import { signOut, useSession } from "next-auth/react";
 import { getUser } from "@/actions/user";
 import { useRouter } from "next/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -17,8 +16,7 @@ export default function Navbar() {
   const { stores, showAdminPanel, setShowAdminPanel } = useStore()
 
 
-  const { data: session } = useSession()
-
+  const { data:session } = useSession()
   const user = getUser(session?.user || null)
 
   const handleLogout = async () => {
@@ -46,58 +44,49 @@ export default function Navbar() {
                   size="sm"
                   className="border-slate-300 text-slate-700 hover:bg-slate-50"
                   key={store.id}
+                  disabled
                 >
                   {store.name}
                 </Button>
 
               ))
               }
-              <Button
-                onClick={() => { }}
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Stores Admin
-              </Button>
 
               <SignInButton />
             </div>
           ) : (
-            <>
-              {!showAdminPanel && (
-                <div className="flex space-x-2">
-                  {stores.map((store: Store) => (
+              <div className="flex gap-2 items-center">
+                {stores.map((store: Store) => (
+                  <Link href={'/tienda/' + store.id}
+                        key={store.id}>
                     <Button
-                      key={store.id}
                       // variant={selectedStore === tienda.id ? "default" : "outline"}
                       size="sm"
-                      onClick={() => { router.push('/tienda/' + store.id) }}
-                    // className={
-                    //   selectedStore === tienda.id
-                    //     ? "bg-blue-600 hover:bg-blue-700 text-white"
-                    //     : "border-slate-300 text-slate-700 hover:bg-slate-50"
-                    // }
-                    >
+                      // className={
+                        //   selectedStore === tienda.id
+                        //     ? "bg-blue-600 hover:bg-blue-700 text-white"
+                        //     : "border-slate-300 text-slate-700 hover:bg-slate-50"
+                        // }
+                        >
                       {store.name}
                     </Button>
-                  ))}
-                </div>
-              )}
-              <div className="flex items-center space-x-2">
+                  </Link>
+                ))}
                 {user?.role === "admin" && (
-                  <Button
-                    variant={showAdminPanel ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setShowAdminPanel(!showAdminPanel)}
-                    className={
-                      showAdminPanel
+                  <Link href={'/admin'}>
+                    <Button
+                      variant={showAdminPanel ? "default" : "outline"}
+                      size="sm"
+                      className={
+                        showAdminPanel
                         ? "bg-blue-600 hover:bg-blue-700 text-white"
                         : "border-slate-300 text-slate-700 hover:bg-slate-50"
-                    }
-                  >
-                    <Settings className="h-4 w-4 mr-2" />
-                    Admin
-                  </Button>
+                      }
+                      >
+                      <Settings className="h-4 w-4 mr-2" />
+                      Admin
+                    </Button>
+                  </Link>
                 )}
                 <div className="flex flex-col" >
                   <h3 className="font-semibold text-sm">¡Hola {user?.name.split(" ")[0]}!</h3>
@@ -105,13 +94,11 @@ export default function Navbar() {
                 </div>
                 <button
                   onClick={() => { handleLogout() }}
-                  className="text-slate-600 hover:text-slate-900 hover:bg-slate-300 p-4 rounded-md transition-all"
-
+                  className="text-slate-600 hover:text-slate-900 bg-slate-200 hover:bg-slate-300 p-4 rounded-md transition-all"
                 >
                   <LogOut className="h-4 w-4" />
                 </button>
               </div>
-            </>
           )}
         </div>
       </div>
