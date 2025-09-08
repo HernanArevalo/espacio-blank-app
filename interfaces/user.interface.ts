@@ -5,12 +5,12 @@ export interface User {
   name: string;
   email: string;
   image?: string;
-  role: string;
-  stores?: { name: string; id: string }[];
+  role: Role;
+  storesIds: number[];
 }
 
 export type SessionUser = {
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
-} & DefaultSession["user"]
+  name?: string | null
+  email?: string | null
+  image?: string | null
+} & DefaultSession['user']

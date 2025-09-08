@@ -11,6 +11,6 @@ export interface Sale {
   client?: string
   date: string
   total: number
-  paymentMethod: "card" | "transfer" | "cash"
+  paymentMethod: string
   items: SaleItem[]
 }
