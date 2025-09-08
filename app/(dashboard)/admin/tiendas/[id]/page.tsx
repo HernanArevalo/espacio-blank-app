@@ -1,30 +1,33 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { EditarTienda } from "@/components/editar-tienda"
-import { tiendas, type UserRole } from "@/lib/data"
+import { useSession } from "next-auth/react"
+import { getUser } from "@/actions/user"
+import { getStoreById } from "@/actions/store"
 
 export default function EditarTiendaPage() {
-  const [userRole, setUserRole] = useState<UserRole | null>(null)
   const router = useRouter()
   const params = useParams()
-  const tiendaId = Number(params.id)
+  const storeId = Number(params.id)
+
+  const { data:session} = useSession()
+  const user = getUser(session?.user || null)
 
   useEffect(() => {
-    const role = localStorage.getItem("userRole") as UserRole
-    if (!role || role !== "super_admin") {
+    if (!user.role || user.role !== "admin") {
       router.push("/")
       return
     }
-    setUserRole(role)
+
   }, [router])
 
-  if (!userRole || userRole !== "super_admin") {
+  if (!user.role || user.role !== "admin") {
     return null
   }
 
-  const tienda = tiendas.find((t) => t.id === tiendaId)
+  const tienda = getStoreById(storeId)
   if (!tienda) {
     router.push("/admin")
     return null
