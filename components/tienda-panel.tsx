@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -8,13 +7,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Package, TrendingUp, Plus, ShoppingCart, Edit } from "lucide-react"
+import { Package, TrendingUp, Plus, ShoppingCart, Edit, Pencil } from "lucide-react"
 import { VentaModal } from "@/components/venta-modal"
 import { ProductoModal } from "@/components/producto-modal"
-import { productosEjemplo, ventasEjemplo, usuariosConfig, getRoleType, type UserRole } from "@/lib/data"
 import { Sale, Store, User } from "@/interfaces"
 import { useStore } from "@/store"
 import { getSales } from "@/actions/sales/get-sales"
+import { GetProductsByStore } from "@/actions/products/get-products-by-store"
 
 interface TiendaPanelProps {
   tienda: Store
@@ -22,14 +21,12 @@ interface TiendaPanelProps {
 }
 
 export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
-  const {showVentaModal, setShowVentaModal, showProductoModal, setShowProductoModal } = useStore()
+  const { showVentaModal, setShowVentaModal, showProductoModal, setShowProductoModal } = useStore()
 
-  // const [showVentaModal, setShowVentaModal] = useState(false)
-  // const [showProductoModal, setShowProductoModal] = useState(false)
   const router = useRouter()
+  const products = GetProductsByStore(tienda.id)
 
   // Filtrar productos y ventas por tienda
-  const productosActuales = productosEjemplo.filter((producto) => producto.tiendaId === tienda.id)
   const ventasActuales = getSales(tienda.id)
 
   const handleEditProduct = (productId: number) => {
@@ -56,22 +53,32 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
 
         <div className="flex space-x-3">
           {
-          // (user.role === "seller" || user.role === "owner") && 
-          (
-            <Button onClick={() => setShowVentaModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Nueva Venta
-            </Button>
-          )}
-          {["owner","admin"].includes(user.role) && (
-            <Button
-              variant="outline"
-              onClick={() => setShowProductoModal(true)}
-              className="border-slate-300 text-slate-700 hover:bg-slate-50"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar Producto
-            </Button>
+            // (user.role === "seller" || user.role === "owner") && 
+            (
+              <Button onClick={() => setShowVentaModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Nueva Venta
+              </Button>
+            )}
+          {["owner", "admin"].includes(user.role) && (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => setShowProductoModal(true)}
+                className="border-slate-300 text-slate-700 hover:bg-slate-50"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Nuevo Producto
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {router.push(`/admin/tiendas/${tienda.id}`)}}
+                className="border-slate-300 text-slate-700 hover:bg-slate-50"
+              >
+                <Pencil className="h-4 w-4 mr-2" />
+                Editar Tienda
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -84,7 +91,7 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
             <Package className="h-4 w-4 text-slate-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{productosActuales.length}</div>
+            <div className="text-2xl font-bold">{products.length}</div>
           </CardContent>
         </Card>
 
@@ -94,7 +101,7 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
             <Package className="h-4 w-4 text-slate-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{productosActuales.reduce((sum, p) => sum + p.stock, 0)}</div>
+            <div className="text-2xl font-bold">{products.reduce((sum, p) => sum + p.stock, 0)}</div>
           </CardContent>
         </Card>
 
@@ -104,7 +111,7 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
             <TrendingUp className="h-4 w-4 text-slate-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{ ventasActuales.length || 0}</div>
+            <div className="text-2xl font-bold">{ventasActuales.length || 0}</div>
           </CardContent>
         </Card>
 
@@ -135,7 +142,7 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
               <CardDescription>Gestiona el stock y precios de tus productos</CardDescription>
             </CardHeader>
             <CardContent>
-              {productosActuales.length === 0 ? (
+              {products.length === 0 ? (
                 <div className="text-center py-8">
                   <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-slate-900 mb-2">No hay productos</h3>
@@ -143,19 +150,19 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {productosActuales.map((producto) => (
-                    <Card key={producto.id}>
+                  {products.map((producto) => (
+                    <Card key={producto.productId}>
                       <CardContent className="p-4">
                         <img
-                          src={producto.imagen || "/placeholder.svg"}
-                          alt={producto.nombre}
+                          src={producto.image || "/placeholder.svg"}
+                          alt={producto.name}
                           className="w-full h-32 object-cover rounded-md mb-3"
                         />
-                        <h3 className="font-semibold text-lg mb-2">{producto.nombre}</h3>
+                        <h3 className="font-semibold text-lg mb-2">{producto.name}</h3>
                         <div className="space-y-2">
                           <div className="flex justify-between">
                             <span className="text-sm text-gray-600">Precio:</span>
-                            <span className="font-medium">${producto.precio.toLocaleString()}</span>
+                            <span className="font-medium">${producto.price.toLocaleString()}</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-sm text-gray-600">Stock:</span>
@@ -173,7 +180,7 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
                             variant="outline"
                             size="sm"
                             className="w-full mt-3 bg-transparent"
-                            onClick={() => handleEditProduct(producto.id)}
+                            onClick={() => handleEditProduct(producto.productId)}
                           >
                             <Edit className="h-4 w-4 mr-2" />
                             Editar
