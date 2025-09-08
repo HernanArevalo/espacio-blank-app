@@ -2,6 +2,8 @@ import { Role, User, Store as StoreInterface, Sale } from '@/interfaces';
 import { create } from 'zustand';
 
 type Store = {
+  loading: boolean;
+  setLoading: (value:boolean)=> void;
   user: User | null | any;
   setUser: (newUser: any) => void;
   stores: StoreInterface[];
