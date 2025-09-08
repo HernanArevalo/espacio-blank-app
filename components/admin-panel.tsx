@@ -5,12 +5,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Plus, Edit, Trash2, UserPlus, Store, Percent } from "lucide-react"
-import { tiendas } from "@/lib/data"
+import { useStore } from "@/store"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { useState } from "react"
+
 
 // Datos de ejemplo de usuarios
 const usuariosEjemplo = [
@@ -39,6 +48,9 @@ const usuariosEjemplo = [
 
 export function AdminPanel() {
   const router = useRouter()
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+
+  const { stores: tiendas, loading } = useStore()
 
   const handleNuevaTienda = () => {
     router.push("/admin/tiendas/nueva")
@@ -56,9 +68,11 @@ export function AdminPanel() {
     router.push(`/admin/usuarios/${usuarioId}`)
   }
 
-  const getTiendasNombres = (tiendaIds: number[]) => {
-    return tiendaIds.map((id) => tiendas.find((t) => t.id === id)?.nombre).join(", ")
+  const handleDelete = () => {
+
   }
+
+
 
   return (
     <div className="container mx-auto px-6 py-8">
@@ -71,7 +85,6 @@ export function AdminPanel() {
         <TabsList>
           <TabsTrigger value="tiendas">Tiendas</TabsTrigger>
           <TabsTrigger value="usuarios">Usuarios</TabsTrigger>
-          <TabsTrigger value="descuentos">Descuentos</TabsTrigger>
         </TabsList>
 
         <TabsContent value="tiendas" className="space-y-6">
@@ -89,12 +102,12 @@ export function AdminPanel() {
                 <CardHeader>
                   <div className="flex items-center space-x-4">
                     <Avatar>
-                      <AvatarImage src={tienda.imagen || "/placeholder.svg"} alt={tienda.nombre} />
-                      <AvatarFallback>{tienda.nombre.charAt(0)}</AvatarFallback>
+                      <AvatarImage src={tienda.image || "/placeholder.svg"} alt={tienda.name} />
+                      <AvatarFallback>{tienda.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <CardTitle className="text-lg">{tienda.nombre}</CardTitle>
-                      <CardDescription>{tienda.descripcion}</CardDescription>
+                      <CardTitle className="text-lg">{tienda.name}</CardTitle>
+                      <CardDescription>{tienda.description}</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
@@ -104,10 +117,31 @@ export function AdminPanel() {
                       <Edit className="h-4 w-4 mr-2" />
                       Editar
                     </Button>
-                    <Button variant="destructive" size="sm">
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Eliminar
-                    </Button>
+                    <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                      <DialogTrigger asChild>
+                        <Button variant="destructive" size="sm">
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Eliminar
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>¿Eliminar tienda?</DialogTitle>
+                          <DialogDescription>
+                            Esta acción no se puede deshacer. La tienda "{tienda.name}" y todos sus datos serán eliminados
+                            permanentemente.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="flex justify-end space-x-3 mt-6">
+                          <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
+                            Cancelar
+                          </Button>
+                          <Button variant="destructive" onClick={handleDelete} disabled={loading}>
+                            {loading ? "Eliminando..." : "Eliminar"}
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </CardContent>
               </Card>
@@ -145,7 +179,7 @@ export function AdminPanel() {
                         {usuario.rol === "owner" ? "Owner" : "Seller"}
                       </Badge>
                     </TableCell>
-                    <TableCell>{getTiendasNombres(usuario.tiendas)}</TableCell>
+                    <TableCell>{"Oeste"}</TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
                         <Button variant="outline" size="sm" onClick={() => handleEditarUsuario(usuario.id)}>
@@ -163,47 +197,6 @@ export function AdminPanel() {
               </TableBody>
             </Table>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="descuentos" className="space-y-6">
-          <h3 className="text-xl font-semibold">Configuración de Descuentos</h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {tiendas.map((tienda) => (
-              <Card key={tienda.id}>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Store className="h-5 w-5" />
-                    <span>{tienda.nombre}</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Efectivo</Label>
-                    <div className="flex items-center space-x-2">
-                      <Input type="number" defaultValue="20" className="w-20" />
-                      <Percent className="h-4 w-4" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Transferencia</Label>
-                    <div className="flex items-center space-x-2">
-                      <Input type="number" defaultValue="10" className="w-20" />
-                      <Percent className="h-4 w-4" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Tarjeta</Label>
-                    <div className="flex items-center space-x-2">
-                      <Input type="number" defaultValue="0" className="w-20" />
-                      <Percent className="h-4 w-4" />
-                    </div>
-                  </div>
-                  <Button size="sm">Guardar Cambios</Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
         </TabsContent>
       </Tabs>
     </div>
