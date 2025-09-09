@@ -8,12 +8,11 @@ import { getUser } from "@/actions/user"
 import { useSession } from "next-auth/react"
 
 export default function AdminPage() {
-  const { data:session} = useSession()
-  const user = getUser(session?.user || null)
+  const user = getUser()
   const router = useRouter()
 
   useEffect(() => {
-    if (!user.role || user.role !== "admin") {
+    if (user.role !== "admin") {
       router.push("/")
       return
     }

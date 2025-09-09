@@ -1,6 +1,5 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
 import { Badge } from "@/components/ui/badge"
@@ -22,27 +21,20 @@ import {
 
 import { useSession } from "next-auth/react"
 import { getUser } from "@/actions/user"
+import { getStores } from "@/actions/stores";
 import { useStore } from "@/store"
-import { getTiendaStats } from "@/utils/getStoreStats"
+import { getTiendaStats } from "@/utils"
 import SignInButton from "@/components/auth/sign-in"
 
 export default function HomePage() {
   const router = useRouter()
 
   const { data: session, status } = useSession()
-  const user = getUser(session?.user || null)
+  const user = getUser()
 
-  const { stores: tiendas,
-    setLoading, loading
-  } = useStore()
+  const {setLoading, loading } = useStore()
+  const stores = getStores()
 
-  useEffect(() => {
-    if (status === "loading") {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
-  }, [status, setLoading]);
 
   if (loading) {
     return (
@@ -53,9 +45,6 @@ export default function HomePage() {
         </div>
       </div>
     )
-  }
-
-  const handleLogin = (role:string) => {
   }
 
   const statsGenerales = {
@@ -84,8 +73,8 @@ export default function HomePage() {
         </div>
         <h2 className="text-3xl font-bold text-slate-900 mb-2">ESPACIO BLANK</h2>
         <p className="text-slate-600 max-w-2xl mx-auto">
-          Gestioná múltiples tiendas, productos y ventas desde una plataforma centralizada.
-          {!session && " Inicia sesión para acceder a todas las funcionalidades."}
+          Gestioná múltiples tiendas, productos y ventas desde una plataforma centralizada. <br/>
+          {status == "unauthenticated" && " Inicia sesión para acceder a todas las funcionalidades."}
         </p>
       </div>
 
@@ -155,7 +144,7 @@ export default function HomePage() {
       <div className="mb-8">
         <h3 className="text-2xl font-bold text-slate-900 mb-6">Resumen por Tiendas</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-          {tiendas.map((tienda) => {
+          {stores.map((tienda) => {
 
             const stats = getTiendaStats(tienda.id)
             const isAccessible = session && (user.role == 'admin' || user.storesIds.includes(tienda.id))
@@ -183,7 +172,7 @@ export default function HomePage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <Avatar className="w-12 h-12">
-                        <AvatarImage src={tienda.image || "/placeholder.svg"} alt={tienda.name} />
+                        <AvatarImage src={tienda.image} alt={tienda.name} />
                         <AvatarFallback>{tienda.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div>

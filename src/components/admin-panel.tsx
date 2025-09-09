@@ -19,6 +19,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useState } from "react"
+import { stores } from "@/data"
 
 
 // Datos de ejemplo de usuarios
@@ -50,7 +51,7 @@ export function AdminPanel() {
   const router = useRouter()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const { stores: tiendas, loading } = useStore()
+  const { loading } = useStore()
 
   const handleNuevaTienda = () => {
     router.push("/admin/tiendas/nueva")
@@ -97,7 +98,7 @@ export function AdminPanel() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tiendas.map((tienda) => (
+            {stores.map((tienda) => (
               <Card key={tienda.id}>
                 <CardHeader>
                   <div className="flex items-center space-x-4">

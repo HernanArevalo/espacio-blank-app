@@ -5,7 +5,7 @@ import { Store } from "@/interfaces";
       id: 2,
       name: 'Olive',
       description: 'Zapatos de mujer con estilo y comodidad',
-      image: '/placeholder.svg?height=100&width=100',
+      image: '/store-olive.jpg',
       discounts: {
         tarjeta: 1,
         transferencia: 0.95,
@@ -48,7 +48,7 @@ import { Store } from "@/interfaces";
       id: 1,
       name: 'Oeste Gafas',
       description: 'Tienda para tus gafas',
-      image: '/placeholder.svg?height=100&width=100',
+      image: '/store-oeste.jpg',
       discounts: {
         tarjeta: 1,
         transferencia: 0.9,

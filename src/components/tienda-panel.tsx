@@ -12,7 +12,7 @@ import { VentaModal } from "@/components/venta-modal"
 import { ProductoModal } from "@/components/producto-modal"
 import { Sale, Store, User } from "@/interfaces"
 import { useStore } from "@/store"
-import { getSales } from "@/actions/sales/get-sales"
+import { getSales } from "@/actions/sales/get-all-sales"
 import { GetProductsByStore } from "@/actions/products/get-products-by-store"
 
 interface TiendaPanelProps {

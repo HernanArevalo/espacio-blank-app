@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  owner
+  seller
+  user
+}
+
+enum PaymentMethod {
+  card
+  transfer
+  cash
+  other
+}
+
+model Store {
+  id          Int       @id @default(autoincrement()) // corresponde a storeId:number
+  name        String
+  description String? 
+  image       String?
+  // descuentos (porcentajes, p.e. 0.9 = 10% off). uso Float para permitir decimales.
+  discountTarjeta     Float   @default(1.0)
+  discountTransferencia Float @default(1.0)
+  discountEfectivo    Float   @default(1.0)
+
+  products    Product[]    // relación 1 - N
+  sales       Sale[]       // relación 1 - N
+
+  // relación many-to-many con usuarios (owners / sellers que tienen acceso a stores)
+  users       UserStore[]
+}
+
+model Product {
+  id          Int     @id @default(autoincrement()) // corresponde a productId:number
+  name        String
+  description String?
+  image       String?
+  price       Float
+  stock       Int     @default(0)
+
+  // relación a tienda
+  store     Store @relation(fields: [storeId], references: [id])
+  storeId   Int
+
+  // relación con items vendidos (opcional)
+  saleItems SaleItem[]
+}
+
+model Sale {
+  id            Int           @id @default(autoincrement()) // corresponde a Sale.id
+  store         Store         @relation(fields: [storeId], references: [id])
+  storeId       Int
+  client        String?       // opcional
+  date          DateTime      @default(now()) // guardá fecha con hora exacta
+  total         Float
+  paymentMethod PaymentMethod
+
+  items         SaleItem[]    // relación 1 - N
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model SaleItem {
+  id        Int     @id @default(autoincrement())
+  name      String
+  quantity  Int
+  price     Float
+  image     String?
+
+  // relación con Sale
+  sale      Sale @relation(fields: [saleId], references: [id])
+  saleId    Int
+
+  // relación opcional con Product (si querés referenciar el producto original)
+  product   Product? @relation(fields: [productId], references: [id])
+  productId Int?
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String   @unique
+  image         String?
+  role          Role     @default(user)
+  password      String?  // si usás auth local; si usás NextAuth con OAuth lo puede quedar NULL
+
+  // relación many-to-many con stores (qué stores tiene acceso)
+  stores        UserStore[]
+
+  // relaciones de ejemplo
+  // orders? invoices? etc.
+}
+
+model UserStore {
+  // tabla intermedia para many-to-many User <-> Store
+  id      Int   @id @default(autoincrement())
+  user    User  @relation(fields: [userId], references: [id])
+  userId  Int
+  store   Store @relation(fields: [storeId], references: [id])
+  storeId Int
+
+  @@unique([userId, storeId])
+}
