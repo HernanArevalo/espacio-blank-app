@@ -1,12 +1,14 @@
 import { SessionUser, User } from '@/interfaces';
+import { useSession } from 'next-auth/react';
 
-export function getUser(sessionUser: SessionUser|null):User {
+export function getUser():User {
+
+  const {data} = useSession()
 
   return {
-    name: 'Hernán Arévalo',
-    email: 'hernanarevalo16@gmail.com',
-    image:
-      'https://lh3.googleusercontent.com/a/ACg8ocJB9AVV5Os3ukiYGdAOK3H1iY-mkQ1kxF79DLfzcDaFJql1BJ0=s96-c',
+    name: data?.user?.name || "",
+    image: data?.user?.image || "",
+    email: data?.user?.email || "",
     role: 'admin',
     storesIds: [],
   };
