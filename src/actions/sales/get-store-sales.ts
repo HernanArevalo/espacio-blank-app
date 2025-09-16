@@ -1,7 +1,7 @@
 import { sales } from "@/data";
 
 
-export function getAllSales (storeId:number) {
+export function getStoreSales (storeId:number) {
 
   return sales.filter(sale=> sale.storeId == storeId) || null
 }
