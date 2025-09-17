@@ -12,7 +12,7 @@ import { VentaModal } from "@/components/venta-modal"
 import { ProductoModal } from "@/components/producto-modal"
 import { Sale, Store, User } from "@/interfaces"
 import { useStore } from "@/store"
-import { getSales } from "@/actions/sales/get-all-sales"
+import { getStoreSales } from "@/actions/sales"
 import { GetProductsByStore } from "@/actions/products/get-products-by-store"
 
 interface TiendaPanelProps {
@@ -27,7 +27,7 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
   const products = GetProductsByStore(tienda.id)
 
   // Filtrar productos y ventas por tienda
-  const ventasActuales = getSales(tienda.id)
+  const ventasActuales = getStoreSales(tienda.id)
 
   const handleEditProduct = (productId: number) => {
     router.push(`/tienda/${tienda.id}/productos/${productId}`)
