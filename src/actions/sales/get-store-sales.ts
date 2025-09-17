@@ -1,7 +1,5 @@
-import { sales } from "@/data";
+import { sales } from '@/data';
 
-
-export function getStoreSales (storeId:number) {
-
-  return sales.filter(sale=> sale.storeId == storeId) || null
+export function getStoreSales(storeId: number) {
+  return sales.filter((sale) => sale.storeId == storeId) || null;
 }
