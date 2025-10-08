@@ -32,6 +32,7 @@ export default function HomePage() {
   const { data: session, status } = useSession()
   const user = getUser()
 
+
   const {setLoading, loading } = useStore()
   const stores = getStores()
 
@@ -82,7 +83,7 @@ export default function HomePage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Tiendas</CardTitle>
+            <CardTitle className="text-sm font-medium">Tiendas</CardTitle>
             <Store className="h-4 w-4 text-slate-400" />
           </CardHeader>
           <CardContent>
@@ -93,7 +94,7 @@ export default function HomePage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Productos</CardTitle>
+            <CardTitle className="text-sm font-medium">Productos</CardTitle>
             <Package className="h-4 w-4 text-slate-400" />
           </CardHeader>
           <CardContent>
@@ -104,7 +105,7 @@ export default function HomePage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Ventas</CardTitle>
+            <CardTitle className="text-sm font-medium">Ventas</CardTitle>
             <ShoppingCart className="h-4 w-4 text-slate-400" />
           </CardHeader>
           <CardContent>
@@ -161,7 +162,7 @@ export default function HomePage() {
                 onClick={() => isAccessible && handleTiendaClick(tienda.id)}
               >
                 {!session && (
-                  <div className="absolute inset-0 bg-gray-200/30 rounded-lg flex items-center justify-center z-10">
+                  <div className="absolute inset-0 bg-gray-100/60 rounded-lg flex items-center justify-center z-10">
                     <div className="bg-white rounded-full p-2 shadow-sm">
                       <Lock className="h-5 w-5 text-black" />
                     </div>
