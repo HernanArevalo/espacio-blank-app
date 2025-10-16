@@ -157,7 +157,11 @@ export function TiendaPanel({ tienda, user }: TiendaPanelProps) {
                           src={producto.image || "/placeholder.svg"}
                           alt={producto.name}
                           className="w-full h-32 object-cover rounded-md mb-3"
+                          onError={(e) => {
+                            e.currentTarget.src = "/placeholder.png";
+                          }}
                         />
+
                         <h3 className="font-semibold text-lg mb-2">{producto.name}</h3>
                         <div className="space-y-2">
                           <div className="flex justify-between">
