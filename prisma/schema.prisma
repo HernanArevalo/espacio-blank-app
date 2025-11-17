@@ -94,7 +94,7 @@ model User {
   password      String?  // si usás auth local; si usás NextAuth con OAuth lo puede quedar NULL
 
   // relación many-to-many con stores (qué stores tiene acceso)
-  stores        UserStore[]
+  storesIds        UserStore[]
 
   // relaciones de ejemplo
   // orders? invoices? etc.
