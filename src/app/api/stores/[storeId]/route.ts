@@ -12,7 +12,6 @@ export async function GET(
   if (!store) {
     return NextResponse.json({ error: "Store not found" }, { status: 404 });
   }
-  console.log(store);
 
   return NextResponse.json(store);
 }
