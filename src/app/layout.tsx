@@ -23,8 +23,8 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className="h-full flex flex-col">
         <Providers>
-          <Navbar />
-          <main className="flex-1 min-h-0">{children}</main>
+          <ClientLayout>
+          </ClientLayout>
         </Providers>
       </body>
     </html>
