@@ -1,15 +1,14 @@
-import { Product } from "./product.interface"
+import { Product } from './product.interface';
+import { Sale } from './sale.interface';
 
 export interface Store {
-  id: number
-  name: string
-  description: string|null
-  image?: string
-  discounts: {
-    tarjeta: number
-    transferencia: number
-    efectivo: number
-  },
-  products: Product[]
+  id: number;
+  name: string;
+  description: string | null;
+  image: string | null;
+  discountTarjeta: number;
+  discountTransferencia: number;
+  discountEfectivo: number;
+  products: Product[];
+  sales: Sale[] | null;
 }
-
