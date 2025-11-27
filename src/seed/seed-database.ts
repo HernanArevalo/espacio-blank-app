@@ -14,13 +14,13 @@ async function main() {
   for (const store of stores) {
     await prisma.store.create({
       data: {
-        id: store.id, // usar el id definido en tu seed
+        id: store.id,
         name: store.name,
         description: store.description,
         image: store.image,
-        discountTarjeta    
-        discountTransferencia
-        discountEfectivo
+        discountTarjeta: store.discounts.tarjeta,
+        discountTransferencia: store.discounts.transferencia,
+        discountEfectivo: store.discounts.efectivo,
         products: {
           create: store.products.map((p) => ({
             name: p.name,
