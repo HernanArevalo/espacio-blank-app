@@ -8,19 +8,23 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Search, Plus, Trash2, CreditCard, Banknote, Smartphone, ShoppingCart, Check } from "lucide-react"
-import { Sale, SaleItem, Store, User } from "@/interfaces"
-import { GetProductsByStore } from "@/actions/products/get-products-by-store"
+import { SaleItem, Store, User } from "@/interfaces"
+import { toast } from "sonner" // Importamos toast para notificaciones
+import { createSale } from "@/actions/sales" // Importamos la Server Action
 import { tiendas } from "@/lib/data"
+
+// Definimos el tipo para el método de pago que espera el backend (Prisma Enum)
+type PaymentMethodType = "cash" | "transfer" | "card" | "other";
 
 interface VentaModalProps {
   isOpen: boolean
   onClose: () => void
   tienda: Store
-  user: User
+  user: User | null
 }
 
 export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
-  const [ventaItems, setVentaItems] = useState<SaleItem[]>([])
+  const [ventaItems, setVentaItems] = useState<any[]>([]) 
   const [searchProduct, setSearchProduct] = useState("")
   const [selectedTiendaVenta, setSelectedTiendaVenta] = useState<number | null>(null)
   const [cliente, setCliente] = useState("")
@@ -28,18 +32,26 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
   const [isProcessing, setIsProcessing] = useState(false)
   const [ventaCompletada, setVentaCompletada] = useState(false)
 
-  // Obtener productos de la tienda actual o seleccionada
-  const tiendaParaVenta = selectedTiendaVenta || tienda.id
-  const productosActuales = GetProductsByStore(tienda.id)
+  const productosActuales = tienda.products
+
 
   const addToVenta = (producto: any) => {
-    const existingItem = ventaItems.find((item) => item.productId === producto.productId)
+    const productId = producto.id; 
+    
+    const existingItem = ventaItems.find((item) => item.productId === productId)
+    
     if (existingItem) {
       setVentaItems(
-        ventaItems.map((item) => (item.productId === producto.productId ? { ...item, cantidad: item.quantity + 1 } : item)),
+        ventaItems.map((item) => (item.productId === productId ? { ...item, quantity: item.quantity + 1 } : item)),
       )
     } else {
-      setVentaItems([...ventaItems, { ...producto, cantidad: 1 }])
+      setVentaItems([...ventaItems, { 
+        productId: productId,
+        name: producto.name,
+        price: producto.price,
+        image: producto.image,
+        quantity: 1 
+      }])
     }
   }
 
@@ -52,7 +64,7 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
       removeFromVenta(productId)
       return
     }
-    setVentaItems(ventaItems.map((item) => (item.productId === productId ? { ...item, cantidad: nuevaCantidad } : item)))
+    setVentaItems(ventaItems.map((item) => (item.productId === productId ? { ...item, quantity: nuevaCantidad } : item)))
   }
 
   const calculateSubtotal = () => {
@@ -62,11 +74,11 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
   const calculateDescuento = (metodo: string) => {
     switch (metodo) {
       case "efectivo":
-        return 0.2
+        return 1 - tienda.discountEfectivo
       case "transferencia":
-        return 0.1
+        return 1 - tienda.discountTransferencia
       case "tarjeta":
-        return 0
+        return 1 - tienda.discountTarjeta
       default:
         return 0
     }
@@ -75,36 +87,65 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
   const calculateTotal = () => {
     const subtotal = calculateSubtotal()
     const descuento = calculateDescuento(metodoPago)
-    return subtotal * (1 - descuento)
+    return subtotal * (descuento)
   }
 
   const procesarVenta = async () => {
+    if (ventaItems.length === 0) return;
+
     setIsProcessing(true)
 
-    // Simular procesamiento de venta
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    try {
+      const storeIdToUse = (user?.role === "seller" && selectedTiendaVenta) 
+        ? selectedTiendaVenta 
+        : tienda.id;
 
-    const ventaData = {
-      tiendaId: tiendaParaVenta,
-      cliente: cliente || "Cliente anónimo",
-      productos: ventaItems,
-      metodoPago,
-      subtotal: calculateSubtotal(),
-      descuento: calculateDescuento(metodoPago),
-      total: calculateTotal(),
-      fecha: new Date().toISOString(),
-      vendedor: user.name,
+      const paymentMap: Record<string, PaymentMethodType> = {
+        "efectivo": "cash",
+        "transferencia": "transfer",
+        "tarjeta": "card"
+      };
+      
+      const validPaymentMethod = paymentMap[metodoPago] || "other";
+
+      const formattedItems = ventaItems.map(item => ({
+        name: item.name,
+        image: item.image,
+        productId: Number(item.productId),
+        quantity: Number(item.quantity),
+        price: Number(item.price)
+      }));
+
+      const finalTotal = calculateTotal();
+
+      const response = await createSale(
+        Number(storeIdToUse),
+        formattedItems,
+        finalTotal,
+        validPaymentMethod,
+        cliente
+      );
+
+      if (!response.ok) {
+        toast.error("Error al procesar venta", { 
+          description: response.message 
+        });
+        setIsProcessing(false);
+        return;
+      }
+
+      toast.success("Venta registrada correctamente");
+      setVentaCompletada(true)
+
+      setTimeout(() => {
+        handleClose()
+      }, 4000)
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Error inesperado", { description: "Por favor intente nuevamente." });
+      setIsProcessing(false);
     }
-
-    console.log("Venta procesada:", ventaData)
-
-    setIsProcessing(false)
-    setVentaCompletada(true)
-
-    // Resetear después de 2 segundos
-    setTimeout(() => {
-      handleClose()
-    }, 2000)
   }
 
   const handleClose = () => {
@@ -114,12 +155,12 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
     setCliente("")
     setMetodoPago("")
     setVentaCompletada(false)
+    setIsProcessing(false) // Asegurar resetear estado de carga
     onClose()
   }
 
   const isFormValid = ventaItems.length > 0 && metodoPago
 
-  // Vista de venta completada
   if (ventaCompletada) {
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -129,9 +170,9 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
               <Check className="h-8 w-8 text-green-600" />
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-2">¡Venta Completada!</h3>
-            <p className="text-slate-600 mb-4">La venta se ha procesado correctamente</p>
+            <p className="text-slate-600 mb-4">La venta se ha procesado y el stock actualizado.</p>
             <div className="bg-slate-50 rounded-lg p-4 mb-4">
-              <p className="text-sm text-slate-600">Total</p>
+              <p className="text-sm text-slate-600">Total Cobrado</p>
               <p className="text-2xl font-bold text-green-600">${calculateTotal().toLocaleString()}</p>
             </div>
             <p className="text-sm text-slate-500">Cerrando automáticamente...</p>
@@ -155,8 +196,9 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Selector de productos */}
           <div className="lg:col-span-2 space-y-4">
+            
             {/* Selector de tienda (solo para sellers con múltiples tiendas) */}
-            {user.role === "seller" && (
+            {user?.role === "seller" && (
               <div>
                 <Label htmlFor="tienda-venta">Seleccionar Tienda</Label>
                 <Select onValueChange={(value) => setSelectedTiendaVenta(Number(value))}>
@@ -193,7 +235,7 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
                 .filter((p) => p.name.toLowerCase().includes(searchProduct.toLowerCase()))
                 .map((producto) => (
                   <div
-                    key={producto.productId}
+                    key={producto.id}
                     className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50"
                   >
                     <div className="flex items-center space-x-3">
@@ -205,7 +247,7 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
                       <div>
                         <p className="font-medium">{producto.name}</p>
                         <p className="text-sm text-gray-600">${producto.price.toLocaleString()}</p>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant={producto.stock > 0 ? "outline" : "destructive"} className="text-xs">
                           Stock: {producto.stock}
                         </Badge>
                       </div>
@@ -324,7 +366,7 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
               )}
 
               <Button className="w-full" onClick={procesarVenta} disabled={!isFormValid || isProcessing}>
-                {isProcessing ? "Procesando..." : "Procesar Venta"}
+                {isProcessing ? "Procesando..." : "Confirmar Venta"}
               </Button>
             </div>
           </div>
