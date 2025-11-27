@@ -6,7 +6,7 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const tienda = getStoreById(params.id)
+  const tienda = await getStoreById(Number(params.id))
 
   return {
     title: tienda?.name || "Tienda no encontrada",
