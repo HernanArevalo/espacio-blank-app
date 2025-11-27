@@ -1,18 +1,17 @@
-import { products } from "@/data/products"
-import { sales } from "@/data/sales"
-import { useStore } from "@/store"
+import { Store } from "@/interfaces"
 
-  export const getTiendaStats = (tiendaId: number) => {
+  export const getTiendaStats = (tienda: Store) => {
 
-    const productos = products.filter((p) => p.storeId === tiendaId)
-    const ventas = sales.filter((v) => v.storeId === tiendaId)
-    const stockTotal = productos.reduce((sum, p) => sum + p.stock, 0)
-    const ingresos = ventas.reduce((sum, v) => sum + v.total, 0)
+    const sales = tienda.sales || []
+    const products = tienda.products || []
+
+    const stockTotal = products.reduce((sum, p) => sum + p.stock, 0)
+    const ingresos = sales.reduce((sum, v) => sum + v.total, 0)
 
     return {
-      productos: productos.length,
+      productos: products.length,
       stockTotal,
-      ventas: ventas.length,
+      ventas: sales.length,
       ingresos,
     }
   }
