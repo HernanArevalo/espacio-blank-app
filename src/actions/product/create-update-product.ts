@@ -1,146 +1,86 @@
-'use server';
+'use server'
 
-import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
-import { Gender, Product, Size } from '@prisma/client';
-import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+import prisma from '@/lib/prisma'
+import { v2 as cloudinary } from 'cloudinary'
 
-import {v2 as cloudinary} from 'cloudinary';
-cloudinary.config( process.env.CLOUDINARY_URL ?? '');
+cloudinary.config(process.env.CLOUDINARY_URL ?? '')
 
 const productSchema = z.object({
-  id: z.string().uuid().optional().nullable(),
-  title: z.string().min(3).max(255),
-  slug: z.string().min(3).max(255),
-  description: z.string(),
-  price: z.coerce
-    .number()
-    .min(0)
-    .transform((val) => Number(val.toFixed(2))),
-  inStock: z.coerce
-    .number()
-    .min(0)
-    .transform((val) => Number(val.toFixed(0))),
-  categoryId: z.string().uuid(),
-  sizes: z.coerce.string().transform((val) => val.split(',')),
-  tags: z.string(),
-  gender: z.nativeEnum(Gender),
-});
+  id: z.coerce.number().optional().nullable(),
+  name: z.string().min(3).max(255),
+  description: z.string().optional().nullable(),
+  price: z.coerce.number().min(0),
+  stock: z.coerce.number().min(0),
+  storeId: z.coerce.number(),
+})
 
 export const createUpdateProduct = async (formData: FormData) => {
-  const data = Object.fromEntries(formData);
-  const productParsed = productSchema.safeParse(data);
+  const data = Object.fromEntries(formData)
+  const parsed = productSchema.safeParse(data)
 
-  if (!productParsed.success) {
-    console.log(productParsed.error);
-    return { ok: false };
+  if (!parsed.success) {
+    console.error(parsed.error)
+    return { ok: false, message: 'Datos inválidos' }
   }
 
-  const product = productParsed.data;
-  product.slug = product.slug.toLowerCase().replace(/ /g, '-').trim();
-
-  const { id, ...rest } = product;
+  const { id, ...rest } = parsed.data
 
   try {
-    const prismaTx = await prisma.$transaction(async (ts) => {
-      let product: Product;
-      const tagsArray = rest.tags
-        .split(',')
-        .map((tag) => tag.trim().toLowerCase());
+    const result = await prisma.$transaction(async (tx) => {
+      let product
 
       if (id) {
-        // update
-        product = await prisma.product.update({
+        product = await tx.product.update({
           where: { id },
-          data: {
-            ...rest,
-            sizes: {
-              set: rest.sizes as Size[],
-            },
-            tags: {
-              set: tagsArray,
-            },
-          },
-        });
-      } else {
-        product = await prisma.product.create({
-          data: {
-            ...rest,
-            sizes: {
-              set: rest.sizes as Size[],
-            },
-            tags: {
-              set: tagsArray,
-            },
-          },
-        });
-      }
-
-      // load images process
-      if ( formData.getAll('images')) {
-        const images = await uploadImages(formData.getAll('images') as File[]);
-
-        if (!images) {
-          throw new Error('error updating images, rollingback')
-        }
-
-        await prisma.productImage.createMany({
-          data: images.map(image => ({
-            url: image!,
-            productId: product.id
-          }))
+          data: rest,
         })
-
+      } else {
+        product = await tx.product.create({
+          data: rest,
+        })
       }
 
-      return {
-        product,
-      };
-    });
+      // Manejo de imagen
+      const imageFile = formData.get('image')
+      if (imageFile instanceof File && imageFile.size > 0) {
+        const url = await uploadImage(imageFile)
+        if (!url) throw new Error('Error subiendo imagen')
 
-    // TODO: revalidate path
-    revalidatePath('/admin/products');
-    revalidatePath(`/admin/product/${product.slug}`);
-    revalidatePath(`/product/${product.slug}`);
+        product = await tx.product.update({
+          where: { id: product.id },
+          data: { image: url },
+        })
+      }
 
-    return {
-      ok: true,
-      product: prismaTx.product
-    };
-  } catch (e){
-    return{
-      ok:false,
-      message: 'Error updating/creating'
-    }
-  }
-};
-
-
-const uploadImages = async( images: File[]) => {
-
-  try {
-    const uploadPromises = images.map( async(image) => {
-
-      try {
-        const buffer = await image.arrayBuffer();
-        const base64image = Buffer.from(buffer).toString('base64');
-  
-        return cloudinary.uploader.upload(`data:image/png;base64,${ base64image }`)
-          .then( r => r.secure_url)
-  
-          
-        } catch (error) {
-          console.log(error);
-          return null
-        }
+      return product
     })
 
-    const uploadedImages = await Promise.all( uploadPromises )
-    return uploadedImages
-        
+    // 🔁 Revalidate todas las páginas que muestran productos
+    revalidatePath(`/tienda/${rest.storeId}`)
+    revalidatePath(`/admin/store/${rest.storeId}`)
+    revalidatePath(`/admin/products`)
 
+    return { ok: true, product: result }
   } catch (error) {
-    console.log(error);
+    console.error('❌ Error creando/actualizando producto:', error)
+    return { ok: false, message: 'Error al guardar el producto' }
+  }
+}
+
+const uploadImage = async (image: File) => {
+  try {
+    const buffer = await image.arrayBuffer()
+    const base64 = Buffer.from(buffer).toString('base64')
+
+    const upload = await cloudinary.uploader.upload(
+      `data:image/png;base64,${base64}`
+    )
+
+    return upload.secure_url
+  } catch (error) {
+    console.error('❌ Error subiendo imagen a Cloudinary:', error)
     return null
   }
 }
