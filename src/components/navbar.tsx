@@ -5,21 +5,37 @@ import { Store } from "@/interfaces";
 import { LogOut, Settings } from "lucide-react";
 import { Badge } from "./ui/badge";
 import SignInButton from "./auth/sign-in";
-import { signOut, useSession } from "next-auth/react";
-import { getUser } from "@/actions/user";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { getStores } from "@/actions/stores";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
   const router = useRouter();
-  const { showAdminPanel, setShowAdminPanel } = useStore()
-  const stores = getStores()
+  const { showAdminPanel, setShowAdminPanel, loading, setLoading } = useStore()
+  const [stores, setStores] = useState([])
 
-  const { status } = useSession()
-  const user = getUser()
+  useEffect(() => {
+    async function fetchStores() {
+      try {
+        const res = await fetch("/api/stores");
+        if (!res.ok) throw new Error("Error fetching stores");
+        const data = await res.json();
+        setStores(data);
+      } catch (error) {
+        console.error("Error loading stores:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchStores();
+  }, []);
+
+  const { user, status } = useAuth()
+
 
   const handleLogout = async () => {
     const res = await signOut()
@@ -91,12 +107,12 @@ export default function Navbar() {
                 </Link>
               )}
               <Avatar className="w-12 h-12">
-                <AvatarImage src={user.image || "/placeholder.svg"} alt={user.name} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={user?.image || "/placeholder.svg"} alt={user?.name} />
+                <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col" >
                 <h3 className="font-semibold text-sm">¡Hola {user?.name.split(" ")[0]}!</h3>
-                <Badge className="bg-slate-200 text-black justify-center uppercase">{user.role}</Badge>
+                <Badge className="bg-slate-200 text-black justify-center uppercase">{user?.role}</Badge>
               </div>
               <button
                 onClick={() => { handleLogout() }}
