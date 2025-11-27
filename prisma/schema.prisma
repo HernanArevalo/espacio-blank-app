@@ -81,7 +81,7 @@ model SaleItem {
 
   // relación opcional con Product (si querés referenciar el producto original)
   product   Product? @relation(fields: [productId], references: [id])
-  productId Int?
+  productId Int
 }
 
 model User {
