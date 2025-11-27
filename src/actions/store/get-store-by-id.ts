@@ -1,10 +1,25 @@
-import { stores } from '@/data';
-import { Store } from '@/interfaces';
+"use server";
 
-export function getStoreById(storeId: number|string): Store|undefined {
+import { Store } from "@/interfaces"
+import prisma from "@/lib/prisma"
 
+export async function getStoreById(storeId:number): Promise<Store|null> {
+  try {
+    const store = await prisma.store.findFirst({ 
+      include: { 
+        products: true, 
+        sales: { include: { items: true }}
+       },
+      where: { id: storeId }
+    
+    })
 
-  const storeFinded = stores.find(store => store.id == storeId)
-
-  return storeFinded;
+    if (!store) {
+      return null
+    }
+    return store
+  } catch (error) {
+    console.error('Error fetching store:', error)
+    return null
+  }
 }
