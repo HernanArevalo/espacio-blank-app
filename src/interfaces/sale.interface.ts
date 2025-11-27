@@ -3,14 +3,14 @@ export interface SaleItem {
   productId: number
   quantity: number
   price: number
-  image?: string
+  image: string | null
 }
 export interface Sale {
   id: number
   storeId: number
-  client?: string
-  date: string
+  client: string | null
+  date: Date
   total: number
   paymentMethod: string
-  items: SaleItem[]
+  items?: SaleItem[] | null
 }
