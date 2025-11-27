@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Plus, Edit, Trash2, UserPlus, Store, Percent } from "lucide-react"
+import { Plus, Edit, Trash2, UserPlus } from "lucide-react"
 import { useStore } from "@/store"
 import {
   Dialog,
@@ -18,8 +18,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { useState } from "react"
-import { stores } from "@/data"
+import { useEffect, useState } from "react"
+import { getStores } from "@/actions/stores"
+import { Store } from "@/interfaces"
 
 
 // Datos de ejemplo de usuarios
@@ -47,9 +48,22 @@ const usuariosEjemplo = [
   },
 ]
 
-export function AdminPanel() {
+export async function AdminPanel() {
   const router = useRouter()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [stores, setStores] = useState<Store[]>([])
+
+
+  useEffect(() => {
+    const getstores = async() => {
+      const tiendas = await getStores()
+      if (tiendas) {
+        setStores(tiendas)
+      }
+    }
+    getstores()
+
+  }, [])
 
   const { loading } = useStore()
 
