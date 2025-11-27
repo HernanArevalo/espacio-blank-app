@@ -1,15 +1,27 @@
+"use server";
+
 import { SessionUser, User } from '@/interfaces';
-import { useSession } from 'next-auth/react';
+import prisma from '@/lib/prisma';
 
-export function getUser():User {
+export async function getUser(sessionUser:SessionUser|null|undefined): Promise<User|null> {
 
-  const {data} = useSession()
+  if (!sessionUser) {
+    return null
+  }
 
-  return {
-    name: data?.user?.name || "",
-    image: data?.user?.image || "",
-    email: data?.user?.email || "",
-    role: 'admin',
-    storesIds: [],
-  };
+  try {
+    const user = await prisma.user.findFirst({ where: { email: sessionUser?.email || "" } })
+    return {
+      name: user?.name || "",
+      image: user?.image || "",
+      email: user?.email || "",
+      role: user?.role || 'user',
+      storesIds: [],
+    };
+    
+  } catch (error) {
+    console.error("error finding user", error)
+    
+    return null
+  }
 }
