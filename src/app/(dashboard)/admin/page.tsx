@@ -3,12 +3,10 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { AdminPanel } from "@/components/admin-panel"
-import type { UserRole } from "@/lib/data"
-import { getUser } from "@/actions/user"
-import { useSession } from "next-auth/react"
+import { useAuth } from "@/context/AuthContext"
 
 export default function AdminPage() {
-  const user = getUser()
+  const {user} = useAuth()
   const router = useRouter()
 
   useEffect(() => {
