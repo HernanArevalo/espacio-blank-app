@@ -16,10 +16,10 @@ export default function SignInButton() {
     onClick={ () => signIn("google") }
     variant="outline"
     size="sm"
-    className="border-slate-300 text-slate-700 hover:bg-slate-100 font-bold"
+    className="border-slate-300 text-slate-700 hover:bg-slate-100 font-bold flex flex-row gap-1"
   >
     <FcGoogle />
-    Iniciar Sesión
+      Iniciar Sesión
   </Button>
 
 }
