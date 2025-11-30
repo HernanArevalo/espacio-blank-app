@@ -174,7 +174,7 @@ export function TiendaPanel({ user }: Props) {
                       <Card key={producto.id}>
                         <CardContent className="p-4">
                           <img
-                            src={producto.image || "/placeholder.svg"}
+                            src={producto.image || "/placeholder.png"}
                             alt={producto.name}
                             className="w-full h-32 object-cover rounded-md mb-3"
                             onError={(e) => {
@@ -199,7 +199,7 @@ export function TiendaPanel({ user }: Props) {
                               </Badge>
                             </div>
                           </div>
-                          {user?.role === "owner" && (
+                          {(["owner","admin"].includes(user?.role || "")) && (
                             <Button
                               variant="outline"
                               size="sm"
