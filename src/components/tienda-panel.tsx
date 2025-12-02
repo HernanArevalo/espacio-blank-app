@@ -199,7 +199,7 @@ export function TiendaPanel({ user }: Props) {
                               </Badge>
                             </div>
                           </div>
-                          {(["owner","admin"].includes(user?.role || "")) && (
+                          {(["owner", "admin"].includes(user?.role || "")) && (
                             <Button
                               variant="outline"
                               size="sm"
