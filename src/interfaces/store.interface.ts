@@ -9,6 +9,6 @@ export interface Store {
   discountTarjeta: number;
   discountTransferencia: number;
   discountEfectivo: number;
-  products: Product[];
-  sales: Sale[] | null;
+  products?: Product[] | null;
+  sales?: Sale[] | null;
 }
