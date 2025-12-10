@@ -21,6 +21,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 role: "user",
               },
             })
+          }else{
+            await prisma.user.update({
+              where: { email },
+              data: {
+                email,
+                name: user.name || "user",
+                image: user.image,
+              },
+              
+            })
           }
           
           user.id = dbUser.id as unknown as string 
