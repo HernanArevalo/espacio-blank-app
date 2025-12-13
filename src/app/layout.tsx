@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import '@/app/globals.css';
 import Navbar from '@/components/navbar';
 import Providers from './providers';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: {
@@ -21,8 +22,11 @@ export default function RootLayout({
     <html lang="en" className="h-full">
       <body className="h-full flex flex-col">
         <Providers>
-            <Navbar />
-            <main className="flex-1 min-h-0">{children}</main>
+              <Navbar />
+              <main className="flex-1 min-h-0">
+                {children}
+            <Toaster/>  
+              </main>
         </Providers>
       </body>
     </html>
