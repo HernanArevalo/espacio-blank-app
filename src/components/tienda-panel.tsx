@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from "next/navigation"
-import { Package, TrendingUp, Plus, ShoppingCart, Edit, Pencil } from "lucide-react"
+import { Package, TrendingUp, Plus, ShoppingCart, Edit, Pencil, EyeClosedIcon, EyeOffIcon, DollarSign, EyeOff } from "lucide-react"
 import { getStoreById } from "@/actions/store"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -73,7 +73,7 @@ export function TiendaPanel({ user }: Props) {
 
           <div className="flex flex-row justify-center items-center flex-wrap gap-3">
             {
-              // (user.role === "seller" || user.role === "owner") && 
+              (user?.role !== "user") &&
               (
                 <Button onClick={() => setShowVentaModal(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
                   <ShoppingCart className="h-4 w-4 mr-2" />
@@ -111,7 +111,7 @@ export function TiendaPanel({ user }: Props) {
               <Package className="h-4 w-4 text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{tienda.products.length}</div>
+              <div className="text-2xl font-bold">{tienda.products?.length || 0}</div>
             </CardContent>
           </Card>
 
@@ -121,7 +121,7 @@ export function TiendaPanel({ user }: Props) {
               <Package className="h-4 w-4 text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{tienda.products.reduce((sum, p) => sum + p.stock, 0)}</div>
+              <div className="text-2xl font-bold">{tienda.products?.reduce((sum, p) => sum + p.stock, 0) || 0}</div>
             </CardContent>
           </Card>
 
@@ -138,12 +138,25 @@ export function TiendaPanel({ user }: Props) {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Ingresos</CardTitle>
-              <TrendingUp className="h-4 w-4 text-slate-400" />
+              {user && user?.role !== "user" ? (
+                // {true ? (
+                <DollarSign className="h-4 w-4 text-slate-400" />
+              ) : (
+                <EyeOff className="h-4 w-4 text-slate-400" />
+              )}
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                ${tienda.sales?.reduce((sum, v) => sum + v.total, 0).toLocaleString()}
-              </div>
+              {user && user?.role !== "user" ?
+                (
+                  <div className="text-2xl font-bold">
+                    $ {tienda.sales?.reduce((sum, v) => sum + v.total, 0).toLocaleString()}
+                  </div>
+                ) :
+                (
+                <div className="text-2xl font-bold text-slate-400">
+                  ••••••
+                </div>
+                )}
             </CardContent>
           </Card>
         </div>
@@ -162,7 +175,7 @@ export function TiendaPanel({ user }: Props) {
                 <CardDescription>Gestiona el stock y precios de tus productos</CardDescription>
               </CardHeader>
               <CardContent>
-                {tienda.products.length === 0 ? (
+                {!tienda.products || tienda.products?.length === 0 ? (
                   <div className="text-center py-8">
                     <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-slate-900 mb-2">No hay productos</h3>
@@ -170,7 +183,7 @@ export function TiendaPanel({ user }: Props) {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {tienda.products.map((producto) => (
+                    {tienda.products?.map((producto) => (
                       <Card key={producto.id}>
                         <CardContent className="p-4">
                           <img
@@ -226,33 +239,42 @@ export function TiendaPanel({ user }: Props) {
                 <CardDescription>Revisa todas las transacciones realizadas</CardDescription>
               </CardHeader>
               <CardContent>
-                {tienda.sales?.length === 0 ? (
-                  <div className="text-center py-8">
-                    <TrendingUp className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2">No hay ventas</h3>
-                    <p className="text-slate-600">Esta tienda aún no tiene ventas registradas</p>
+                {user?.role == "user" ?
+                  (<div className="text-center py-8">
+                    <EyeOffIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-slate-900 mb-2"></h3>
+                    <p className="text-slate-600">No tienes rol para ver esta data</p>
                   </div>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        {/* Columna vacía para el botón chevron */}
-                        <TableHead className="w-[50px]"></TableHead>
-                        <TableHead>Fecha</TableHead>
-                        <TableHead>Cliente</TableHead>
-                        <TableHead className="text-center">Items</TableHead>
-                        <TableHead>Método</TableHead>
-                        <TableHead>Total</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {tienda.sales?.map((venta) => (
-                        // Usamos el nuevo componente aquí
-                        <VentaRow key={venta.id} venta={venta} />
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
+                  )
+                  :
+
+                  tienda.sales?.length === 0 ? (
+                    <div className="text-center py-8">
+                      <TrendingUp className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-slate-900 mb-2">No hay ventas</h3>
+                      <p className="text-slate-600">Esta tienda aún no tiene ventas registradas</p>
+                    </div>
+                  ) : (
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          {/* Columna vacía para el botón chevron */}
+                          <TableHead className="w-[50px]"></TableHead>
+                          <TableHead>Fecha</TableHead>
+                          <TableHead>Cliente</TableHead>
+                          <TableHead className="text-center">Items</TableHead>
+                          <TableHead>Método</TableHead>
+                          <TableHead>Total</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {tienda.sales?.map((venta) => (
+                          // Usamos el nuevo componente aquí
+                          <VentaRow key={venta.id} venta={venta} />
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
               </CardContent>
             </Card>
           </TabsContent>
