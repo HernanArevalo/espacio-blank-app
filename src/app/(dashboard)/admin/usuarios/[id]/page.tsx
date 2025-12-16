@@ -1,59 +1,49 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { useRouter, useParams } from "next/navigation"
+import { auth } from "@/app/auth"
+import { redirect, notFound } from "next/navigation"
+import { getUserById } from "@/actions/user/get-user-by-id"
+import { getStores } from "@/actions/stores"
 import { EditarUsuario } from "@/components/editar-usuario"
-import type { UserRole } from "@/lib/data"
 
-// Datos de ejemplo de usuarios
-const usuariosEjemplo = [
-  {
-    id: 1,
-    nombre: "Juan Pérez",
-    email: "juan@example.com",
-    rol: "owner" as const,
-    tiendas: [1],
-  },
-  {
-    id: 2,
-    nombre: "María García",
-    email: "maria@example.com",
-    rol: "seller" as const,
-    tiendas: [2],
-  },
-  {
-    id: 3,
-    nombre: "Carlos Ruiz",
-    email: "carlos@example.com",
-    rol: "seller" as const,
-    tiendas: [1, 2, 3, 4],
-  },
-]
+interface Props {
+  params: { id: string }
+}
 
-export default function EditarUsuarioPage() {
-  const [userRole, setUserRole] = useState<UserRole | null>(null)
-  const router = useRouter()
-  const params = useParams()
-  const usuarioId = Number(params.id)
+export default async function EditarUsuarioPage({ params }: Props) {
 
-  useEffect(() => {
-    const role = localStorage.getItem("userRole") as UserRole
-    if (!role || role !== "super_admin") {
-      router.push("/")
-      return
-    }
-    setUserRole(role)
-  }, [router])
-
-  if (!userRole || userRole !== "super_admin") {
-    return null
+  const session = await auth()
+  if (!session?.user || session.user.role !== "admin") {
+    redirect("/")
   }
 
-  const usuario = usuariosEjemplo.find((u) => u.id === usuarioId)
+
+  const userId = Number(params.id)
+  if (isNaN(userId)) notFound()
+
+
+    const [usuario, allStores] = await Promise.all([
+    getUserById(userId),
+    getStores()
+  ])
+
   if (!usuario) {
-    router.push("/admin")
-    return null
+    redirect("/admin")
   }
 
-  return <EditarUsuario usuario={usuario} />
+
+  const formattedUser = {
+    id: usuario.id,
+    name: usuario.name,
+    email: usuario.email,
+    role: usuario.role,
+    image: usuario.image,
+
+    tiendas: usuario.storesIds.map((relacion) => relacion.storeId) 
+  }
+
+  return (
+    <EditarUsuario 
+      usuario={formattedUser} 
+      availableStores={allStores || []} 
+    />
+  )
 }
