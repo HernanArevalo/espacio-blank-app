@@ -21,14 +21,14 @@ enum PaymentMethod {
 }
 
 model Store {
-  id          Int       @id @default(autoincrement()) // corresponde a storeId:number
+  id          Int       @id @default(autoincrement())
   name        String
   description String? 
   image       String?
   // descuentos (porcentajes, p.e. 0.9 = 10% off). uso Float para permitir decimales.
-  discountTarjeta     Float   @default(1.0)
+  discountTarjeta       Float   @default(1.0)
   discountTransferencia Float @default(1.0)
-  discountEfectivo    Float   @default(1.0)
+  discountEfectivo      Float   @default(1.0)
 
   products    Product[]    // relación 1 - N
   sales       Sale[]       // relación 1 - N
@@ -45,17 +45,15 @@ model Product {
   price       Float
   stock       Int     @default(0)
 
-  // relación a tienda
-  store     Store @relation(fields: [storeId], references: [id])
-  storeId   Int
+  store       Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId     Int
 
-  // relación con items vendidos (opcional)
-  saleItems SaleItem[]
+  saleItems   SaleItem[]
 }
 
 model Sale {
-  id            Int           @id @default(autoincrement()) // corresponde a Sale.id
-  store         Store         @relation(fields: [storeId], references: [id])
+  id            Int           @id @default(autoincrement())
+  store         Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
   storeId       Int
   client        String?       // opcional
   date          DateTime      @default(now()) // guardá fecha con hora exacta
@@ -69,19 +67,20 @@ model Sale {
 }
 
 model SaleItem {
-  id        Int     @id @default(autoincrement())
-  name      String
-  quantity  Int
-  price     Float
-  image     String?
+  id       Int     @id @default(autoincrement())
+  name     String
+  quantity Int
+  price    Float
+  image    String?
 
-  // relación con Sale
-  sale      Sale @relation(fields: [saleId], references: [id])
+  // AQUÍ: Si borras la venta (cabecera), se borran los items (detalle)
+  sale      Sale @relation(fields: [saleId], references: [id], onDelete: Cascade)
   saleId    Int
 
-  // relación opcional con Product (si querés referenciar el producto original)
-  product   Product? @relation(fields: [productId], references: [id])
-  productId Int
+  // AQUÍ: Si borras un producto del catálogo, NO queremos borrar la venta histórica.
+  // Mejor usamos SetNull para que el historial quede, pero pierda el link al producto original.
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId Int?
 }
 
 model User {
@@ -93,7 +92,7 @@ model User {
   password      String?  // si usás auth local; si usás NextAuth con OAuth lo puede quedar NULL
 
   // relación many-to-many con stores (qué stores tiene acceso)
-  storesIds        UserStore[]
+  storesIds     UserStore[]
 
   // relaciones de ejemplo
   // orders? invoices? etc.
@@ -101,11 +100,11 @@ model User {
 
 model UserStore {
   // tabla intermedia para many-to-many User <-> Store
-  id      Int   @id @default(autoincrement())
-  user    User  @relation(fields: [userId], references: [id])
-  userId  Int
-  store   Store @relation(fields: [storeId], references: [id])
-  storeId Int
+  id            Int   @id @default(autoincrement())
+  user          User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int
+  store         Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId       Int
 
   @@unique([userId, storeId])
 }
