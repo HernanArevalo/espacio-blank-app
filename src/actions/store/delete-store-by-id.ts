@@ -10,9 +10,8 @@ export const deleteStoreById = async (id: number) => {
     });
 
     revalidatePath('/admin');
-    revalidatePath('/admin/tiendas');
     revalidatePath('/');
-    revalidatePath('/admin/tienda/id');
+    revalidatePath('/admin/tiendas/id');
 
     return { ok: true, message: 'Tienda eliminada correctamente' };
   } catch (error) {

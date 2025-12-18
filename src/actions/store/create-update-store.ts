@@ -66,8 +66,8 @@ export const createUpdateProduct = async (formData: FormData) => {
     })
 
     // 3. Revalidar rutas
-    revalidatePath(`/tienda/${productData.storeId}`)
-    revalidatePath(`/tienda/${productData.storeId}/productos`)
+    revalidatePath(`/tiendas/${productData.storeId}`)
+    revalidatePath(`/tiendas/${productData.storeId}/productos`)
     revalidatePath(`/admin/tiendas/${productData.storeId}`)
 
     return { ok: true, product: prismaTx }

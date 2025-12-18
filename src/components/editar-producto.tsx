@@ -116,7 +116,7 @@ export function EditarProducto({ tienda, producto }: EditarProductoProps) {
 
       if (res.ok) {
         toast.success("Producto actualizado")
-        router.push(`/tienda/${tienda.id}`)
+        router.push(`/tiendas/${tienda.id}`)
         router.refresh() // Refrescar cache de Next.js
       } else {
         toast.error("Error al actualizar", { description: res.message })
@@ -139,7 +139,7 @@ export function EditarProducto({ tienda, producto }: EditarProductoProps) {
     toast.success("Producto eliminado")
     setIsLoading(false)
     setShowDeleteDialog(false)
-    router.push(`/tienda/${tienda.id}`)
+    router.push(`/tiendas/${tienda.id}`)
   }
 
   const isFormValid = formData.name.trim() && formData.price && formData.stock
@@ -155,7 +155,7 @@ export function EditarProducto({ tienda, producto }: EditarProductoProps) {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => router.push(`/tienda/${tienda.id}`)}
+            onClick={() => router.push(`/tiendas/${tienda.id}`)}
             className="text-slate-600 hover:text-slate-900"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />

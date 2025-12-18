@@ -86,7 +86,7 @@ export default function Navbar() {
               {/* Lista de Tiendas (Links) */}
               <div className="hidden md:flex gap-2">
                 {stores.map((store) => (
-                  <Link href={'/tienda/' + store.id} key={store.id}>
+                  <Link href={'/tiendas/' + store.id} key={store.id}>
                     <Button
                       size="sm"
                       variant="outline"

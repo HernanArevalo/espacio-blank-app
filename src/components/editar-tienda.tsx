@@ -113,7 +113,7 @@ export function EditarTienda({ tienda }: EditarTiendaProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm" onClick={() => router.push("/admin/tiendas")} className="text-slate-600 hover:text-slate-900">
+          <Button variant="ghost" size="sm" onClick={() => router.push("/admin")} className="text-slate-600 hover:text-slate-900">
             <ArrowLeft className="h-4 w-4 mr-2" /> Volver
           </Button>
         </div>

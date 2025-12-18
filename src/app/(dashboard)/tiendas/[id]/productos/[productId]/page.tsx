@@ -35,20 +35,18 @@ export default async function EditarProductoPage({ params }: Props) {
 
 
   if (!tienda) {
-
-    redirect("/admin/tiendas") 
+    redirect("/admin") 
   }
 
   if (!producto) {
-
-    redirect(`/tienda/${storeId}`)
+    redirect(`/tiendas/${storeId}`)
   }
 
 
 
   if (producto.storeId !== tienda.id) {
     console.error(`Intento de acceso cruzado: Producto ${productId} no pertenece a Tienda ${storeId}`)
-    redirect(`/tienda/${storeId}`)
+    redirect(`/tiendas/${storeId}`)
   }
 
 

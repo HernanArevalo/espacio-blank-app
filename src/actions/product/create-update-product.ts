@@ -65,8 +65,8 @@ export const createUpdateProduct = async (formData: FormData) => {
     }
 
     // 4. Revalidar rutas para refrescar la UI (Adaptado a tus rutas)
-    revalidatePath(`/tienda/${product.storeId}`)
-    revalidatePath(`/tienda/${product.storeId}/productos`) 
+    revalidatePath(`/tiendas/${product.storeId}`)
+    revalidatePath(`/tiendas/${product.storeId}/productos`) 
     revalidatePath(`/admin/tiendas/${product.storeId}`)
     
     return { ok: true, product }

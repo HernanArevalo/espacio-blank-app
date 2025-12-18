@@ -31,7 +31,7 @@ export const StoreResume = ({ tienda }: Props) => {
 
   const handleTiendaClick = (tiendaId: number) => {
     if (user) {
-      redirect(`/tienda/${tiendaId}`)
+      redirect(`/tiendas/${tiendaId}`)
     }
   }
 

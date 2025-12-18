@@ -48,7 +48,7 @@ export function TiendaPanel({ user }: Props) {
 
 
   const handleEditProduct = (productId: number) => {
-    router.push(`/tienda/${storeId}/productos/${productId}`)
+    router.push(`/tiendas/${storeId}/productos/${productId}`)
   }
 
   if (tienda) {

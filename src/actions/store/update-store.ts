@@ -56,7 +56,7 @@ export const updateStore = async (formData: FormData) => {
     // 3. Revalidar
     revalidatePath('/admin/tiendas')
     revalidatePath(`/admin/tiendas/${id}`)
-    revalidatePath(`/tienda/${id}`)
+    revalidatePath(`/tiendas/${id}`)
     
     return { ok: true, message: 'Tienda actualizada correctamente' }
 

@@ -67,7 +67,7 @@ export async function createSale(
 
     // 3. Revalidar rutas
     revalidatePath(`/admin/tiendas/${storeId}`);
-    revalidatePath(`/tienda/${storeId}`);
+    revalidatePath(`/tiendas/${storeId}`);
     
     return { ok: true, sale: sale };
 
