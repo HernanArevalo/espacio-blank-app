@@ -20,7 +20,7 @@ export const StoresResume = async({ stores }: Props) => {
 
   const statsGenerales = {
     totalTiendas: stores.length,
-    totalProductos: stores.reduce((act, store)=> act + store.products.length, 0),
+    totalProductos: stores.reduce((act, store)=> act + (store.products?.length || 0), 0),
     totalVentas: stores.flatMap(store=> store.sales).length,
     totalIngresos: stores.flatMap(store => store.sales ?? []).reduce((acc, sale) => acc + (sale?.total ?? 0), 0)
   }
@@ -71,8 +71,7 @@ export const StoresResume = async({ stores }: Props) => {
             )}
           </CardHeader>
           <CardContent>
-            {session ? (
-            // {true ? (
+            {(session && session?.user.role !== "user") ? (
               <>
                 <div className="text-2xl font-bold text-green-600">
                   ${statsGenerales.totalIngresos.toLocaleString()}
@@ -82,7 +81,7 @@ export const StoresResume = async({ stores }: Props) => {
             ) : (
               <>
                 <div className="text-2xl font-bold text-slate-400">••••••</div>
-                <p className="text-xs text-slate-400">Inicia sesión para ver</p>
+                <p className="text-xs text-slate-400">Datos ocultos</p>
               </>
             )}
           </CardContent>
