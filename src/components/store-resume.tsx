@@ -111,15 +111,15 @@ export const StoreResume = ({ tienda }: Props) => {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                {user ? (
+                {(user && user.role !== "user") ? (
                   <TrendingUp className="h-4 w-4 text-slate-400" />
                 ) : (
                   <EyeOff className="h-4 w-4 text-slate-400" />
                 )}
                 <span className="text-sm text-slate-600">Ingresos</span>
               </div>
-              {user ? (
-                <span className="font-semibold text-green-600">${stats.ingresos.toLocaleString()}</span>
+              {(user && user.role !== "user") ? (
+                <span className="font-semibold text-green-600">$ {stats.ingresos.toLocaleString()}</span>
               ) : (
                 <span className="font-semibold text-slate-400">••••••</span>
               )}
@@ -141,7 +141,7 @@ export const StoreResume = ({ tienda }: Props) => {
         )}
 
         {/* Alerta de información restringida */}
-        {!user && stats.ingresos > 0 && (
+        {!user && (
           <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
             <div className="flex items-center space-x-2">
               <EyeOff className="h-4 w-4 text-gray-500" />
