@@ -10,8 +10,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ArrowLeft, Percent, Save, Store, UploadCloud, ImagePlus, X, CheckCircle } from "lucide-react"
 import { toast } from "sonner"
-import { updateStore } from "@/actions/store/update-store" // Importar la nueva acción
-import { Store as StoreInterface } from "@/interfaces" // O @prisma/client
+import { updateStore } from "@/actions/store/update-store"
+import { Store as StoreInterface } from "@/interfaces"
 import { delay } from "@/utils"
 
 interface EditarTiendaProps {
@@ -68,42 +68,42 @@ export function EditarTienda({ tienda }: EditarTiendaProps) {
   }
 
   const handleSave = async () => {
-  setIsLoading(true);
+    setIsLoading(true);
 
-  try {
-    const data = new FormData();
-    data.append("id", tienda.id.toString());
-    data.append("name", formData.name);
-    data.append("description", formData.description || ""); 
-    
-    data.append("discountEfectivo", formData.discountEfectivo.toString());
-    data.append("discountTransferencia", formData.discountTransferencia.toString());
-    data.append("discountTarjeta", formData.discountTarjeta.toString());
+    try {
+      const data = new FormData();
+      data.append("id", tienda.id.toString());
+      data.append("name", formData.name);
+      data.append("description", formData.description || "");
 
-    if (selectedFile) {
-      data.append("image", selectedFile);
-    }
+      data.append("discountEfectivo", formData.discountEfectivo.toString());
+      data.append("discountTransferencia", formData.discountTransferencia.toString());
+      data.append("discountTarjeta", formData.discountTarjeta.toString());
 
-    const res = await updateStore(data);
+      if (selectedFile) {
+        data.append("image", selectedFile);
+      }
 
-    if (res.ok) {
-      toast.success("Tienda actualizada con éxito");
+      const res = await updateStore(data);
 
-      await delay(1000);
+      if (res.ok) {
+        toast.success("Tienda actualizada con éxito");
 
-      router.refresh();
-      router.push("/admin");
+        await delay(1000);
 
-    } else {
-      toast.error("Error al actualizar", { description: res.message });
+        router.refresh();
+        router.push("/admin");
+
+      } else {
+        toast.error("Error al actualizar", { description: res.message });
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error inesperado al intentar guardar");
       setIsLoading(false);
     }
-  } catch (error) {
-    console.error(error);
-    toast.error("Error inesperado al intentar guardar");
-    setIsLoading(false);
-  }
-};
+  };
 
   const isFormValid = formData.name.trim() !== ""
   const displayImage = previewUrl || currentImage || "/placeholder.svg"
