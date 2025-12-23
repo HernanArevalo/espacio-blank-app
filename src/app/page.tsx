@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 export default async function HomePage() {
 
   const session = await auth()
-  
+
   const stores = await getStores()
 
   return (
@@ -69,10 +69,10 @@ export default async function HomePage() {
           </p>
           <Button className="bg-green-600 hover:bg-green-700">
             Ir al Dashboard Completo
-          </Button> 
+          </Button>
         </div>
       )}
-     
+
     </div>
   )
 }

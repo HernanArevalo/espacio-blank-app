@@ -26,12 +26,12 @@ import { getUsers } from "@/actions/users/get-users"
 
 export function AdminPanel() {
   const router = useRouter()
-  
+
   // Estados de datos
   const [stores, setStores] = useState<Store[]>([])
   const [users, setUsers] = useState<User[]>([])
   const [loadingData, setLoadingData] = useState(true)
-  
+
   // Estados para acciones
   const [isDeleting, setIsDeleting] = useState(false)
   const [storeToDelete, setStoreToDelete] = useState<number | null>(null)
@@ -52,7 +52,7 @@ export function AdminPanel() {
         setLoadingData(false)
       }
 
-       try {
+      try {
         const userData = await getUsers()
         if (userData) {
           setUsers(userData)
@@ -80,7 +80,7 @@ export function AdminPanel() {
     setIsDeleting(true)
     try {
       const res = await deleteStoreById(storeToDelete)
-      
+
       if (res.ok) {
         setStores((prev) => prev.filter((s) => s.id !== storeToDelete))
         toast.success("Tienda eliminada correctamente")
@@ -133,11 +133,11 @@ export function AdminPanel() {
           </div>
 
           {stores.length === 0 ? (
-             <div className="text-center py-10 border-2 border-dashed rounded-lg">
-                <StoreIcon className="mx-auto h-10 w-10 text-gray-400" />
-                <h3 className="mt-2 text-sm font-semibold text-gray-900">No hay tiendas</h3>
-                <p className="mt-1 text-sm text-gray-500">Comienza creando una nueva tienda.</p>
-             </div>
+            <div className="text-center py-10 border-2 border-dashed rounded-lg">
+              <StoreIcon className="mx-auto h-10 w-10 text-gray-400" />
+              <h3 className="mt-2 text-sm font-semibold text-gray-900">No hay tiendas</h3>
+              <p className="mt-1 text-sm text-gray-500">Comienza creando una nueva tienda.</p>
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {stores.map((tienda) => (
@@ -158,17 +158,17 @@ export function AdminPanel() {
                   </CardHeader>
                   <CardContent className="pt-4">
                     <div className="flex justify-between items-center text-sm text-slate-500 mb-4">
-                        <span>ID: {tienda.id}</span>
-                        {/* Puedes mostrar más info aquí si la traes en el include */}
+                      <span>ID: {tienda.id}</span>
+                      {/* Puedes mostrar más info aquí si la traes en el include */}
                     </div>
                     <div className="flex space-x-2">
                       <Button variant="outline" size="sm" className="flex-1" onClick={() => handleEditarTienda(tienda.id)}>
                         <Edit className="h-4 w-4 mr-2" />
                         Editar
                       </Button>
-                      <Button 
-                        variant="destructive" 
-                        size="sm" 
+                      <Button
+                        variant="destructive"
+                        size="sm"
                         className="px-3"
                         onClick={() => openDeleteDialog(tienda.id)}
                       >
@@ -209,16 +209,16 @@ export function AdminPanel() {
                     <TableCell className="font-medium">{usuario.name}</TableCell>
                     <TableCell>{usuario.email}</TableCell>
                     <TableCell>
-                      <Badge variant={usuario.role === "admin" || usuario.role === "owner"? "default" : "secondary"}>
+                      <Badge variant={usuario.role === "admin" || usuario.role === "owner" ? "default" : "secondary"}>
                         {usuario.role.toUpperCase()}
                       </Badge>
                     </TableCell>
                     <TableCell className="flex flex-col gap-1">
-                      {usuario.storesIds.map((tienda)=>(
-                      <Badge variant={"secondary"} key={tienda.store.id} className="w-fit">
-                        {tienda.store.name}
-                      </Badge>
-                    ))}
+                      {usuario.storesIds.map((tienda) => (
+                        <Badge variant={"secondary"} key={tienda.store.id} className="w-fit">
+                          {tienda.store.name}
+                        </Badge>
+                      ))}
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
@@ -244,7 +244,7 @@ export function AdminPanel() {
           <DialogHeader>
             <DialogTitle>¿Estás seguro?</DialogTitle>
             <DialogDescription>
-              Esta acción eliminará la tienda y <strong>todos sus productos y ventas asociados</strong>. 
+              Esta acción eliminará la tienda y <strong>todos sus productos y ventas asociados</strong>.
               No se puede deshacer.
             </DialogDescription>
           </DialogHeader>

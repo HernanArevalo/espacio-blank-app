@@ -24,7 +24,7 @@ interface EditarUsuarioProps {
     email: string
     image: string | null
     role: Role
-    tiendas: number[]|null
+    tiendas: number[] | null
   }
   availableStores: Store[]
 }
@@ -133,8 +133,8 @@ export function EditarUsuario({ usuario, availableStores }: EditarUsuarioProps) 
           <CardContent className="space-y-6">
             <div>
               <Label>Nombre</Label>
-              <Input 
-                value={formData.name} 
+              <Input
+                value={formData.name}
                 onChange={e => handleInputChange("name", e.target.value)}
               />
             </div>

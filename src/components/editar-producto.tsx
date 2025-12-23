@@ -28,7 +28,7 @@ interface EditarProductoProps {
 
 export function EditarProducto({ tienda, producto }: EditarProductoProps) {
   const router = useRouter()
-  
+
   // Estado del formulario
   const [formData, setFormData] = useState({
     name: producto.name,
@@ -42,7 +42,7 @@ export function EditarProducto({ tienda, producto }: EditarProductoProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null) // Nueva imagen (Archivo)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null) // Preview de la nueva imagen
   const [isDragging, setIsDragging] = useState(false)
-  
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -135,7 +135,7 @@ export function EditarProducto({ tienda, producto }: EditarProductoProps) {
     // Aquí deberías llamar a una action real como deleteProduct(producto.id)
     await new Promise((resolve) => setTimeout(resolve, 1000))
     console.log("Producto eliminado:", producto.id)
-    
+
     toast.success("Producto eliminado")
     setIsLoading(false)
     setShowDeleteDialog(false)
@@ -202,7 +202,7 @@ export function EditarProducto({ tienda, producto }: EditarProductoProps) {
             <CardDescription>Modifica la información del producto</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            
+
             {/* Área de Imagen */}
             <div>
               <Label className="mb-2 block">Imagen del Producto</Label>
@@ -210,7 +210,7 @@ export function EditarProducto({ tienda, producto }: EditarProductoProps) {
                 // Si hay una NUEVA imagen seleccionada
                 <div className="relative w-full h-48 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 group">
                   <img src={previewUrl} alt="Preview" className="w-full h-full object-contain" />
-                  <button 
+                  <button
                     onClick={removeSelectedImage}
                     className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full shadow-md transition-all"
                   >
@@ -219,7 +219,7 @@ export function EditarProducto({ tienda, producto }: EditarProductoProps) {
                 </div>
               ) : (
                 // Dropzone
-                <div 
+                <div
                   onClick={() => fileInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
@@ -230,20 +230,20 @@ export function EditarProducto({ tienda, producto }: EditarProductoProps) {
                   `}
                 >
                   <div className="flex flex-col items-center text-slate-500">
-                      {isDragging ? (
-                          <UploadCloud className="h-10 w-10 text-blue-500 mb-2" />
-                      ) : (
-                          <ImagePlus className="h-10 w-10 mb-2 opacity-50" />
-                      )}
-                      <p className="text-sm font-medium">
-                          {isDragging ? "Suelta la imagen aquí" : "Clic para cambiar imagen"}
-                      </p>
-                      <p className="text-xs text-slate-400 mt-1">PNG, JPG, WEBP (Max 5MB)</p>
+                    {isDragging ? (
+                      <UploadCloud className="h-10 w-10 text-blue-500 mb-2" />
+                    ) : (
+                      <ImagePlus className="h-10 w-10 mb-2 opacity-50" />
+                    )}
+                    <p className="text-sm font-medium">
+                      {isDragging ? "Suelta la imagen aquí" : "Clic para cambiar imagen"}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">PNG, JPG, WEBP (Max 5MB)</p>
                   </div>
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    className="hidden" 
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
                     accept="image/*"
                     onChange={handleFileChange}
                   />
