@@ -1,9 +1,13 @@
 import NextAuth from "next-auth"
-import Google from "next-auth/providers/google"
+import GoogleProvider from "next-auth/providers/google"
 import prisma from "@/lib/prisma"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [Google],
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+    })],
   session: { strategy: "jwt" },
   callbacks: {
     async signIn({ user, account }) {
@@ -21,7 +25,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 role: "user",
               },
             })
-          }else{
+          } else {
             await prisma.user.update({
               where: { email },
               data: {
@@ -29,13 +33,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 name: user.name || "user",
                 image: user.image,
               },
-              
+
             })
           }
-          
-          user.id = dbUser.id as unknown as string 
-          user.role = dbUser.role 
-          
+
+          user.id = dbUser.id as unknown as string
+          user.role = dbUser.role
+
           return true
         } catch (error) {
           console.error("Error en signIn:", error)
@@ -50,7 +54,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.id = user.id as unknown as number
         token.role = user.role
-      } 
+      }
       else if (token.email) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
@@ -59,11 +63,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (dbUser) {
           token.role = dbUser.role
-          token.picture = dbUser.image 
+          token.picture = dbUser.image
           token.name = dbUser.name
         }
       }
-      
+
       if (trigger === "update" && session) {
         token = { ...token, ...session }
       }
@@ -80,7 +84,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             ...session.user,
             id: token.id as any,
             role: token.role,
-            image: token.picture, 
+            image: token.picture,
             name: token.name
           },
         }
