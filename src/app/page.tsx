@@ -11,6 +11,8 @@ import { auth } from "./auth";
 import SignInButton from "@/components/auth/sign-in";
 import { Button } from "@/components/ui/button";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
 
   const session = await auth()
