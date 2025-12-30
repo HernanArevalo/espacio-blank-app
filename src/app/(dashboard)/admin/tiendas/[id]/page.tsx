@@ -9,6 +9,8 @@ import { Store } from "@/interfaces"
 import { useStore } from "@/store"
 import { useAuth } from "@/context/AuthContext"
 
+export const dynamic = "force-dynamic";
+
 export default function EditarTiendaPage() {
   const router = useRouter()
   const params = useParams()
