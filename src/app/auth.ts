@@ -1,12 +1,12 @@
 import NextAuth from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
+import Google from "next-auth/providers/google"
 import prisma from "@/lib/prisma"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: { 
         params: {
           prompt: "select_account"
@@ -15,6 +15,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     })],
   session: { strategy: "jwt" },
+  secret: process.env.AUTH_SECRET,
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
