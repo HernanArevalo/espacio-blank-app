@@ -1,5 +1,5 @@
 import { redirect, notFound } from "next/navigation"
-import { auth } from "@/app/auth" 
+import { auth } from "@/auth" 
 import { getProductById } from "@/actions/product/get-product-by-id"
 import { getStoreById } from "@/actions/store/get-store-by-id"
 import { EditarProducto } from "@/components/editar-producto"

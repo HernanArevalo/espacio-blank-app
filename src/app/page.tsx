@@ -7,7 +7,7 @@ import {
 import { getStores } from "@/actions/stores";
 import { StoresResume } from "@/components/stores-resume";
 import { StoreResume } from "@/components/store-resume"
-import { auth } from "./auth";
+import { auth } from "@/auth";
 import SignInButton from "@/components/auth/sign-in";
 import { Button } from "@/components/ui/button";
 

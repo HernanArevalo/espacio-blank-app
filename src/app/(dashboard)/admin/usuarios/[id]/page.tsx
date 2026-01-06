@@ -1,4 +1,4 @@
-import { auth } from "@/app/auth"
+import { auth } from "@/auth"
 import { redirect, notFound } from "next/navigation"
 import { getUserById } from "@/actions/user/get-user-by-id"
 import { getStores } from "@/actions/stores"

@@ -1,5 +1,5 @@
 // middleware.ts
-import { auth } from "@/app/auth";
+import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
 export default auth((req) => {

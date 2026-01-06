@@ -1,5 +1,5 @@
 import { getAllSales } from "@/actions/sales"
-import { auth } from "@/app/auth"
+import { auth } from "@/auth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Store as StoreInterface } from "@/interfaces"
 import {
