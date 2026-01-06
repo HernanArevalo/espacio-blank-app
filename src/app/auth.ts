@@ -12,7 +12,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           prompt: "select_account"
         }
       },
-
     })],
   session: { strategy: "jwt" },
   secret: process.env.AUTH_SECRET,
