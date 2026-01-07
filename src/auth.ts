@@ -14,7 +14,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     })],
   session: { strategy: "jwt" },
-  secret: process.env.AUTH_SECRET,
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
