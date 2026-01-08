@@ -1,4 +1,4 @@
-export * from './create-update-store'
-export * from './delete-store-by-id'
-export * from './get-store-by-id'
-export * from './update-store'
+export { createUpdateProduct } from './create-update-store'
+export { deleteStoreById } from './delete-store-by-id'
+export { getStoreById } from './get-store-by-id'
+export { updateStore } from './update-store'
