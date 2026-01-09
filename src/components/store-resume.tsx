@@ -25,13 +25,15 @@ interface Props {
 
 export const StoreResume = ({ tienda }: Props) => {
   const { user } = useAuth()
+  const router = useRouter()
 
   const stats = getTiendaStats(tienda)
   const isAccessible = user && (user.role == 'admin' || user.storesIds.includes(tienda.id))
 
   const handleTiendaClick = (tiendaId: number) => {
     if (user) {
-      redirect(`/tiendas/${tiendaId}`)
+      console.log(user)
+      router.push(`/tiendas/${tiendaId}`)
     }
   }
 
