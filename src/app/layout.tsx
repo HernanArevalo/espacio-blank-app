@@ -9,8 +9,50 @@ export const metadata: Metadata = {
     default: "ESPACIO BLANK",
     template: "%s | ESPACIO BLANK",
   },
-  description: 'Espacio Blank',
-  icons: "/favicon.ico"
+
+  description:
+    "ESPACIO BLANK · Todas tus tiendas, en un solo lugar.",
+
+  applicationName: "Espacio Blank",
+
+  metadataBase: new URL("https://espacio-blank-app.vercel.app"),
+
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+
+  openGraph: {
+    title: "ESPACIO BLANK",
+    description:
+      "Todas tus tiendas, en un solo lugar.",
+    url: "https://espacio-blank-app.vercel.app",
+    siteName: "Espacio Blank",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Espacio Blank",
+      },
+    ],
+    locale: "es_AR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ESPACIO BLANK",
+    description:
+      "Todas tus tiendas, en un solo lugar.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+
+  category: "decoración",
 };
 
 export default function RootLayout({
