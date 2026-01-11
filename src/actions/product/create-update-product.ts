@@ -5,16 +5,14 @@ import { z } from 'zod'
 import prisma from '@/lib/prisma'
 import { v2 as cloudinary } from 'cloudinary'
 
-// Configuración de Cloudinary (Asegúrate de tener CLOUDINARY_URL en tu .env)
 cloudinary.config(process.env.CLOUDINARY_URL ?? '')
 
-// Esquema de validación adaptado a tu modelo Product
 const productSchema = z.object({
-  id: z.coerce.number().optional(), // Puede no venir si es creación
+  id: z.coerce.number().optional(),
   name: z.string().min(3).max(255),
   description: z.string().optional().nullable(),
-  price: z.coerce.number().min(0), // Coerce convierte el string del form a number
-  stock: z.coerce.number().min(0).int(), // Stock debe ser entero
+  price: z.coerce.number().min(0),
+  stock: z.coerce.number().min(0).int(),
   storeId: z.coerce.number().int(),
 })
 
@@ -30,7 +28,6 @@ export const createUpdateProduct = async (formData: FormData) => {
   const { id, ...productData } = parsed.data
 
   try {
-    // 1. Manejo de la imagen (Si viene un archivo nuevo)
     const imageFile = formData.get('image')
     let imageUrl: string | null = null
 
@@ -41,8 +38,6 @@ export const createUpdateProduct = async (formData: FormData) => {
       }
     }
 
-    // 2. Preparar el objeto final para guardar en DB
-    // Si hay nueva imagen, la agregamos. Si no, dejamos que Prisma mantenga la anterior (en update)
     const dataToSave = {
       ...productData,
       ...(imageUrl && { image: imageUrl }), // Solo agrega la propiedad si hay URL
@@ -50,21 +45,17 @@ export const createUpdateProduct = async (formData: FormData) => {
 
     let product;
 
-    // 3. Transacción o llamada a Prisma
     if (id) {
-      // --- ACTUALIZAR ---
       product = await prisma.product.update({
         where: { id },
         data: dataToSave,
       })
     } else {
-      // --- CREAR ---
       product = await prisma.product.create({
         data: dataToSave,
       })
     }
 
-    // 4. Revalidar rutas para refrescar la UI (Adaptado a tus rutas)
     revalidatePath(`/tiendas/${product.storeId}`)
     revalidatePath(`/tiendas/${product.storeId}/productos`) 
     revalidatePath(`/admin/tiendas/${product.storeId}`)
@@ -77,16 +68,14 @@ export const createUpdateProduct = async (formData: FormData) => {
   }
 }
 
-// Función auxiliar para subir a Cloudinary
 const uploadImage = async (image: File) => {
   try {
     const buffer = await image.arrayBuffer()
     const base64 = Buffer.from(buffer).toString('base64')
-
     // Subida como data URI
     const upload = await cloudinary.uploader.upload(
       `data:image/png;base64,${base64}`,
-      { folder: 'espacio-blank' } // Opcional: carpeta en cloudinary
+      { folder: 'espacio-blank' }
     )
 
     return upload.secure_url
