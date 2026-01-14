@@ -28,14 +28,13 @@ export default async function HomePage() {
         </div>
         <h2 className="text-3xl font-bold text-slate-900 mb-2">ESPACIO BLANK</h2>
         <p className="text-slate-600 max-w-2xl mx-auto">
-          Gestioná múltiples tiendas, productos y ventas desde una plataforma centralizada. <br />
+          Gestioná múltiples tiendas, productos y ventas desde una plataforma centralizada.<br />
           {session && " Inicia sesión para acceder a todas las funcionalidades."}
         </p>
       </div>
 
       {/* Estadísticas Generales */}
       <StoresResume stores={stores} />
-
 
       {/* Resumen por Tienda */}
       <div className="mb-8">
