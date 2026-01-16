@@ -42,10 +42,8 @@ export const StoreResume = ({ tienda }: Props) => {
       key={tienda.id}
       className={`relative transition-all duration-200 ${
           user? 
-            isAccessible
-            ? "hover:shadow-lg cursor-pointer border-blue-200 hover:border-blue-300 hover:bg-blue-50 hover:bg-opacity-50"
-            : "opacity-60 cursor-not-allowed"
-          : "opacity-75"
+            "hover:shadow-lg cursor-pointer border-blue-200 hover:border-blue-300 hover:bg-blue-50 hover:bg-opacity-50"
+            : "opacity-75"
         }`}
       onClick={() => isAccessible && handleTiendaClick(tienda.id)}
     >
