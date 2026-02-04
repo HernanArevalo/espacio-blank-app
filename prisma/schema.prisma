@@ -22,49 +22,64 @@ enum PaymentMethod {
 }
 
 model Store {
-  id          Int       @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   name        String
-  description String? 
+  description String?
   image       String?
-  // descuentos (porcentajes, p.e. 0.9 = 10% off). uso Float para permitir decimales.
-  discountTarjeta       Float   @default(1.0)
+
+  discountTarjeta       Float @default(1.0)
   discountTransferencia Float @default(1.0)
-  discountEfectivo      Float   @default(1.0)
+  discountEfectivo      Float @default(1.0)
 
-  products    Product[]    // relación 1 - N
-  sales       Sale[]       // relación 1 - N
-
-  // relación many-to-many con usuarios (owners / sellers que tienen acceso a stores)
+  products    Product[]
+  sales       Sale[]
   users       UserStore[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Product {
-  id          Int     @id @default(autoincrement()) // corresponde a productId:number
+  id          Int     @id @default(autoincrement())
   name        String
   description String?
   image       String?
   price       Float
   stock       Int     @default(0)
 
+  active      Boolean @default(true)
+
   store       Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
   storeId     Int
 
   saleItems   SaleItem[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Sale {
   id            Int           @id @default(autoincrement())
+
   store         Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
   storeId       Int
-  client        String?       // opcional
-  date          DateTime      @default(now()) // guardá fecha con hora exacta
+
+
+  seller        User          @relation(fields: [sellerId], references: [id])
+  sellerId      Int
+
+  date          DateTime      @default(now())
   total         Float
   paymentMethod PaymentMethod
 
-  items         SaleItem[]    // relación 1 - N
+  items         SaleItem[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([storeId])
+  @@index([sellerId])
+  @@index([date])
 }
 
 model SaleItem {
@@ -74,38 +89,45 @@ model SaleItem {
   price    Float
   image    String?
 
-  // AQUÍ: Si borras la venta (cabecera), se borran los items (detalle)
   sale      Sale @relation(fields: [saleId], references: [id], onDelete: Cascade)
   saleId    Int
 
-  // AQUÍ: Si borras un producto del catálogo, NO queremos borrar la venta histórica.
-  // Mejor usamos SetNull para que el historial quede, pero pierda el link al producto original.
   product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
   productId Int?
+
+  @@index([saleId])
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
-  name          String
-  email         String   @unique
-  image         String?
-  role          Role     @default(user)
-  password      String?  // si usás auth local; si usás NextAuth con OAuth lo puede quedar NULL
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  image    String?
+  role     Role   @default(user)
+  password String?
 
-  // relación many-to-many con stores (qué stores tiene acceso)
-  storesIds     UserStore[]
+  deletedAt DateTime?
+  active    Boolean  @default(true)
 
-  // relaciones de ejemplo
-  // orders? invoices? etc.
+  storesIds UserStore[]
+  sales     Sale[]   // ventas realizadas por el usuario
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
 }
 
 model UserStore {
-  // tabla intermedia para many-to-many User <-> Store
-  id            Int   @id @default(autoincrement())
-  user          User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        Int
-  store         Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  storeId       Int
+  id      Int   @id @default(autoincrement())
+
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int
+
+  store   Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId Int
+
+  role    Role?
 
   @@unique([userId, storeId])
 }
