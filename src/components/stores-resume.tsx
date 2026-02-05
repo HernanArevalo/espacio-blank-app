@@ -1,7 +1,7 @@
 import { getAllSales } from "@/actions/sales"
 import { auth } from "@/auth"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Store as StoreInterface } from "@/interfaces"
+import { StoreWithProductsAndSales } from "@/types/prisma.types";
 import {
   ShoppingCart,
   EyeOff,
@@ -11,7 +11,7 @@ import {
 } from "lucide-react"
 
 interface Props {
-  stores: StoreInterface[]
+  stores: StoreWithProductsAndSales[]
 }
 
 export const StoresResume = async({ stores }: Props) => {

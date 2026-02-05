@@ -2,7 +2,7 @@
 
 import { getUser } from "@/actions/user"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Store as StoreInterface, User } from "@/interfaces"
+import { Store as StoreInterface, User } from "@prisma/client";
 import { getTiendaStats } from "@/utils"
 import {
   ShoppingCart,

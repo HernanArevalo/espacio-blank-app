@@ -8,10 +8,11 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Search, Plus, Trash2, CreditCard, Banknote, Smartphone, ShoppingCart, Check } from "lucide-react"
-import { SaleItem, Store, User } from "@/interfaces"
+import { SaleItem, User } from "@prisma/client";
 import { toast } from "sonner" // Importamos toast para notificaciones
 import { createSale } from "@/actions/sales" // Importamos la Server Action
 import { tiendas } from "@/lib/data"
+import { StoreWithProductsAndSales } from "@/types/prisma.types"
 
 // Definimos el tipo para el método de pago que espera el backend (Prisma Enum)
 type PaymentMethodType = "cash" | "transfer" | "card" | "other";
@@ -19,7 +20,7 @@ type PaymentMethodType = "cash" | "transfer" | "card" | "other";
 interface VentaModalProps {
   isOpen: boolean
   onClose: () => void
-  tienda: Store
+  tienda: StoreWithProductsAndSales
   user: User | null
 }
 
@@ -87,7 +88,7 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
   const calculateTotal = () => {
     const subtotal = calculateSubtotal()
     const descuento = calculateDescuento(metodoPago)
-    return subtotal * (descuento)
+    return subtotal * (1-descuento)
   }
 
   const procesarVenta = async () => {
@@ -114,7 +115,7 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
         productId: Number(item.productId),
         quantity: Number(item.quantity),
         price: Number(item.price)
-      }));
+      })) as SaleItem[];
 
       const finalTotal = calculateTotal();
 
@@ -134,6 +135,7 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
         return;
       }
 
+      onClose()
       toast.success("Venta registrada correctamente");
       setVentaCompletada(true)
 
@@ -231,7 +233,7 @@ export function VentaModal({ isOpen, onClose, tienda, user }: VentaModalProps) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-80 overflow-y-auto">
-              {productosActuales
+              {productosActuales && productosActuales
                 .filter((p) => p.name.toLowerCase().includes(searchProduct.toLowerCase()))
                 .map((producto) => (
                   <div

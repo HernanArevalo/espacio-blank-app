@@ -1,4 +1,4 @@
-import { Sale } from '@/interfaces';
+import { Sale } from "@prisma/client";
 
 export const sales: Sale[] = [
   {

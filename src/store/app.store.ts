@@ -1,4 +1,4 @@
-import { Role, Sale, User, Store as StoreInterface } from '@/interfaces';
+import { Role, Sale, User, Store as StoreInterface } from "@prisma/client";
 import { create } from 'zustand';
 
 type Store = {

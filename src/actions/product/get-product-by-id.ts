@@ -1,6 +1,6 @@
 "use server";
 
-import { Product } from "@/interfaces"
+import { Product } from '@prisma/client';
 import prisma from "@/lib/prisma"
 
 export async function getProductById(productId:number): Promise<Product|null> {

@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Product, Store } from "@/interfaces"
+import { Product, Store } from "@prisma/client";
 import { createUpdateProduct } from "@/actions/product/create-update-product"
 import { toast } from "sonner"
 

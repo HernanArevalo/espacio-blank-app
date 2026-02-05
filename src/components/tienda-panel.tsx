@@ -12,12 +12,12 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { VentaModal } from "@/components/venta-modal"
 import { ProductoModal } from "@/components/producto-modal"
-import { Store, User } from "@/interfaces"
 import { useStore } from "@/store"
 import { VentaRow } from './ventas/venta-row';
+import { StoreWithProductsAndSales, UserWithStores } from '@/types/prisma.types';
 
 interface Props {
-  user: User | null
+  user: UserWithStores | null
 }
 
 export function TiendaPanel({ user }: Props) {
@@ -29,12 +29,12 @@ export function TiendaPanel({ user }: Props) {
 
   const { id: storeId } = useParams()
 
-  const [tienda, setTienda] = useState<Store | null>(null)
+  const [tienda, setTienda] = useState<StoreWithProductsAndSales | null>(null)
 
   const getTienda = async () => {
     setLoading(true)
-    const tienda = await getStoreById(Number(storeId))
-    setTienda(tienda)
+    const newTienda = await getStoreById(Number(storeId))
+    setTienda(newTienda)
     setLoading(false)
     if (!tienda) {
       router.push("/")

@@ -1,8 +1,8 @@
 "use server";
 
 import { products } from '@/data';
-import { Product } from '@/interfaces';
 import prisma from "@/lib/prisma"
+import { Product } from '@prisma/client';
 
 export async function GetProductsByStore(storeId:number): Promise<Product[]> {
 

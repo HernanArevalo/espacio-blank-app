@@ -1,7 +1,7 @@
 "use server";
 
-import { Store } from "@/interfaces"
 import prisma from "@/lib/prisma"
+import { Store } from "@prisma/client";
 
 export async function getStores(): Promise<Store[]> {
   try {

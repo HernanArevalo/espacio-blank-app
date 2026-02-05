@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Store } from "@/interfaces"
+import { Store } from '@prisma/client';
 import { createUpdateProduct } from "@/actions/product/create-update-product"
 import Swal from "sweetalert2";
 import { ImagePlus, X, UploadCloud } from "lucide-react" // Iconos necesarios
@@ -176,7 +176,7 @@ export function ProductoModal({ isOpen, onClose, tienda }: ProductoModalProps) {
             <Textarea id="descripcion" placeholder="Descripción del producto..." value={producto.descripcion} onChange={handleChange} />
           </div>
 
-                    {/* Área de Imagen (Drag & Drop) */}
+          {/* Área de Imagen (Drag & Drop) */}
           <div>
             <Label className="mb-2 block">Imagen del Producto</Label>
             

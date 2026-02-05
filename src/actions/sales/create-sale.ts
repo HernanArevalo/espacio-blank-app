@@ -2,8 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { PaymentMethod } from '@prisma/client'; // Importamos el Enum de tu schema
-import { SaleItem } from '@/interfaces';
+import { PaymentMethod, SaleItem } from '@prisma/client';
 
 export async function createSale(
   storeId: number,

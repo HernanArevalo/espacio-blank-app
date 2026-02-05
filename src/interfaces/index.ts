@@ -1,5 +1,1 @@
-export * from './roles.interface'
 export * from './user.interface'
-export * from './store.interface'
-export * from './sale.interface'
-export * from './product.interface'

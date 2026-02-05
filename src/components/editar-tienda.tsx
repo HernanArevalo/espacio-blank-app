@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ArrowLeft, Percent, Save, Store, UploadCloud, ImagePlus, X, CheckCircle } from "lucide-react"
 import { toast } from "sonner"
 import { updateStore } from "@/actions/store/update-store"
-import { Store as StoreInterface } from "@/interfaces"
+import { Store as StoreInterface } from '@prisma/client';
 import { delay } from "@/utils"
 
 interface EditarTiendaProps {

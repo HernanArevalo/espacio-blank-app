@@ -1,7 +1,8 @@
 "use server";
 
-import { SessionUser, User } from '@/interfaces';
+import { SessionUser } from '@/interfaces';
 import prisma from '@/lib/prisma';
+import { User } from '@prisma/client';
 
 export async function getUser(sessionUser:SessionUser|null|undefined): Promise<User|null> {
 

@@ -1,9 +1,9 @@
 "use server";
 
-import { Store } from "@/interfaces"
 import prisma from "@/lib/prisma"
+import { StoreWithProductsAndSales } from "@/types/prisma.types";
 
-export async function getStoreById(storeId:number): Promise<Store|null> {
+export async function getStoreById(storeId:number): Promise<StoreWithProductsAndSales|null> {
   try {
     const store = await prisma.store.findFirst({ 
       include: { 
@@ -12,7 +12,7 @@ export async function getStoreById(storeId:number): Promise<Store|null> {
        },
       where: { id: storeId }
     
-    })
+    }) as StoreWithProductsAndSales
 
     if (!store) {
       return null

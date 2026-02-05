@@ -1,4 +1,4 @@
-import { Store } from "@/interfaces"
+import { Store } from "@prisma/client";
 
   export const getTiendaStats = (tienda: Store) => {
 

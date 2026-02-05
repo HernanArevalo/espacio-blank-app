@@ -19,9 +19,10 @@ import {
 } from "@/components/ui/dialog"
 import { getStores } from "@/actions/stores"
 import { deleteStoreById } from "@/actions/store/delete-store-by-id"
-import { Store, User } from "@/interfaces"
+import { Store } from '@prisma/client';
 import { toast } from "sonner"
 import { getUsers } from "@/actions/users/get-users"
+import { UserWithStores } from "@/types/prisma.types"
 
 
 export function AdminPanel() {
@@ -29,7 +30,7 @@ export function AdminPanel() {
 
   // Estados de datos
   const [stores, setStores] = useState<Store[]>([])
-  const [users, setUsers] = useState<User[]>([])
+  const [users, setUsers] = useState<UserWithStores[]>([])
   const [loadingData, setLoadingData] = useState(true)
 
   // Estados para acciones
@@ -148,8 +149,13 @@ export function AdminPanel() {
                         <AvatarImage src={tienda.image || "/placeholder.svg"} alt={tienda.name} />
                         <AvatarFallback>{tienda.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
-                      <div>
-                        <CardTitle className="text-lg">{tienda.name}</CardTitle>
+                      <div className="w-full ">
+                        <div className="flex flex-row align-center items-center justify-between w-full space-between">
+                          <CardTitle className="text-lg">{tienda.name}</CardTitle>
+                          <div className="text-xs bg-slate-700 text-white p-1 px-2 rounded-md">
+                            # {tienda.id}
+                          </div>
+                        </div>
                         <CardDescription className="line-clamp-1">
                           {tienda.description || "Sin descripción"}
                         </CardDescription>
@@ -158,7 +164,6 @@ export function AdminPanel() {
                   </CardHeader>
                   <CardContent className="pt-4">
                     <div className="flex justify-between items-center text-sm text-slate-500 mb-4">
-                      <span>ID: {tienda.id}</span>
                       {/* Puedes mostrar más info aquí si la traes en el include */}
                     </div>
                     <div className="flex space-x-2">

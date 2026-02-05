@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation"
 import { EditarTienda } from "@/components/editar-tienda"
 import { getUser } from "@/actions/user"
 import { getStoreById } from "@/actions/store"
-import { Store } from "@/interfaces"
+import { Store } from "@prisma/client";
 import { useStore } from "@/store"
 import { useAuth } from "@/context/AuthContext"
 

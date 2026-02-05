@@ -1,1 +1,0 @@
-export type Role = "admin" | "owner" | "seller" | "user"
