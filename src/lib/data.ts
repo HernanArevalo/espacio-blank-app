@@ -23,7 +23,7 @@ export const tiendas = [
 
 // Configuración de usuarios con sus tiendas asignadas
 export const usuariosConfig = {
-  super_admin: {
+  admin: {
     nombre: "Admin Principal",
     tiendas: tiendas.map((t) => t.id), // Acceso a todas las tiendas
   },
@@ -118,7 +118,7 @@ export const ventasEjemplo = [
 
 // Determinar el tipo de rol (super_admin, owner, seller)
 export const getRoleType = (role: UserRole): "super_admin" | "owner" | "seller" => {
-  if (role === "super_admin") return "super_admin"
+  if (role === "admin") return "super_admin"
   if (role.startsWith("owner_")) return "owner"
   return "seller"
 }
