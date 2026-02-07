@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
 import { LogOut, Settings, Store as StoreIcon } from "lucide-react"
 
@@ -18,16 +18,26 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import SignInButton from "./auth/sign-in"
 
 export default function Navbar() {
-  const router = useRouter()
+  const pathname = usePathname()
 
   const { data: session, status } = useSession()
   const user = session?.user
 
-  const { showAdminPanel } = useStore()
+  const { showAdminPanel, setShowAdminPanel } = useStore()
   const [stores, setStores] = useState<Store[]>([])
   const [loadingStores, setLoadingStores] = useState(true)
 
   useEffect(() => {
+    if (pathname.startsWith("/admin")) {
+      setShowAdminPanel(true)
+    }else {
+      setShowAdminPanel(false)
+    }
+    console.log("called")
+  }, [pathname])
+  
+  useEffect(() => {
+
     async function fetchStoresData() {
       try {
         const data = await getStores()
@@ -45,7 +55,7 @@ export default function Navbar() {
   }, [])
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: "/" }) // Redirige automáticamente
+    await signOut({ callbackUrl: "/" })
   }
 
   return (
@@ -96,7 +106,7 @@ export default function Navbar() {
                     <Button
                       variant={showAdminPanel ? "default" : "secondary"}
                       size="sm"
-                      className={showAdminPanel ? "bg-blue-600 text-white" : ""}
+                      className={showAdminPanel ? "bg-blue-600 text-white" : "hover:bg-gray-200 transition-colors"}
                     >
                       <Settings className="h-4 w-4 mr-2" />
                       Admin
