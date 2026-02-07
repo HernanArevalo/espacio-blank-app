@@ -21,6 +21,12 @@ enum PaymentMethod {
   other
 }
 
+enum SaleChannel {
+  PRESENTIAL
+  WEB
+  OTHER
+}
+
 model Store {
   id          Int     @id @default(autoincrement())
   name        String
@@ -64,13 +70,13 @@ model Sale {
   store         Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
   storeId       Int
 
-
   seller        User          @relation(fields: [sellerId], references: [id])
   sellerId      Int
 
   date          DateTime      @default(now())
   total         Float
   paymentMethod PaymentMethod
+  channel       SaleChannel   @default(PRESENTIAL)
 
   items         SaleItem[]
 
@@ -81,6 +87,7 @@ model Sale {
   @@index([sellerId])
   @@index([date])
 }
+
 
 model SaleItem {
   id       Int     @id @default(autoincrement())
