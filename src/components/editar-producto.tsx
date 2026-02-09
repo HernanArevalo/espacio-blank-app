@@ -20,6 +20,7 @@ import {
 import { Product, Store } from "@prisma/client";
 import { createUpdateProduct } from "@/actions/product/create-update-product"
 import { toast } from "sonner"
+import { deleteProductById, deleteProductImage } from "@/actions/product"
 
 interface EditarProductoProps {
   tienda: Store
@@ -132,11 +133,23 @@ export function EditarProducto({ tienda, producto }: EditarProductoProps) {
   // -- ELIMINAR (Pendiente de tu Server Action de eliminar) --
   const handleDelete = async () => {
     setIsLoading(true)
-    // Aquí deberías llamar a una action real como deleteProduct(producto.id)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    console.log("Producto eliminado:", producto.id)
+    setShowDeleteDialog(true)
 
-    toast.success("Producto eliminado")
+    try {
+      const res = await deleteProductById(producto.id)
+
+      if (res.ok) {
+        toast.success("Producto eliminado")
+        if (producto.image){
+          deleteProductImage(producto.image)
+        }
+      } else {
+        toast.error("Error al eliminar", { description: res.message })
+      }
+    } catch (error) {
+      toast.error("Error inesperado")
+    }
+
     setIsLoading(false)
     setShowDeleteDialog(false)
     router.push(`/tiendas/${tienda.id}`)

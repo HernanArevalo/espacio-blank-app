@@ -1,63 +1,48 @@
 "use server";
 
-import prisma from '@/lib/prisma';
-import { v2 as cloudinary } from 'cloudinary';
-import { revalidatePath } from 'next/cache';
+import { v2 as cloudinary } from "cloudinary";
 
-cloudinary.config(process.env.CLOUDINARY_URL ?? '');
+cloudinary.config(process.env.CLOUDINARY_URL ?? "");
+
+const extractPublicId = (url: string) => {
+  try {
+    const parts = url.split("/upload/")[1];
+    if (!parts) return null;
+
+    const withoutVersion = parts.replace(/^v\d+\//, "");
+    const publicId = withoutVersion.replace(/\.[^/.]+$/, "");
+
+    return publicId;
+  } catch {
+    return null;
+  }
+};
 
 export const deleteProductImage = async (
-  imageId: number,
   imageUrl: string
 ): Promise<{ ok: boolean; message?: string }> => {
-  if (!imageUrl.startsWith('http')) {
-    return {
-      ok: false,
-      message: 'Invalid image URL. Cannot delete from FS',
-    };
+
+  if (!imageUrl.startsWith("http")) {
+    return { ok: false, message: "Invalid image URL" };
   }
 
-  // Obtener el "public_id" que Cloudinary necesita para borrar
-  const imageName =
-    imageUrl.split('/').pop()?.split('.')[0] ?? '';
+  const publicId = extractPublicId(imageUrl);
+
+  if (!publicId) {
+    return { ok: false, message: "Could not extract public_id" };
+  }
 
   try {
-    // Borrar en Cloudinary
-    const cloudinaryResult = await cloudinary.uploader.destroy(imageName);
+    const result = await cloudinary.uploader.destroy(publicId);
 
-    if (cloudinaryResult.result !== 'ok' && cloudinaryResult.result !== 'not found') {
-      return {
-        ok: false,
-        message: 'Cloudinary deletion failed',
-      };
+    if (result.result !== "ok" && result.result !== "not found") {
+      return { ok: false, message: "Cloudinary deletion failed" };
     }
 
-    // Borrar en Prisma
-    const deletedImage = await prisma.productImage.delete({
-      where: { id: imageId },
-      select: {
-        product: {
-          select: {
-            slug: true,
-          },
-        },
-      },
-    });
+    return { ok: true, message: "Image deleted successfully" };
 
-    // Revalidar rutas relacionadas
-    revalidatePath('/admin/products');
-    revalidatePath(`/admin/product/${deletedImage.product.slug}`);
-    revalidatePath(`/product/${deletedImage.product.slug}`);
-
-    return {
-      ok: true,
-      message: 'Image deleted successfully',
-    };
   } catch (error) {
-    console.error('Error deleting image:', error);
-    return {
-      ok: false,
-      message: 'Unexpected error while deleting image',
-    };
+    console.error(error);
+    return { ok: false, message: "Unexpected error deleting image" };
   }
 };
