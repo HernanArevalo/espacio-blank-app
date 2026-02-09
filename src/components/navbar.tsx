@@ -20,6 +20,8 @@ import SignInButton from "./auth/sign-in"
 export default function Navbar() {
   const pathname = usePathname()
 
+
+
   const { data: session, status } = useSession()
   const user = session?.user
 
@@ -33,7 +35,6 @@ export default function Navbar() {
     }else {
       setShowAdminPanel(false)
     }
-    console.log("called")
   }, [pathname])
   
   useEffect(() => {
