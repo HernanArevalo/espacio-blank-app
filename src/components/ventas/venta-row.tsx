@@ -22,7 +22,7 @@ export function VentaRow({ venta }: { venta: any }) {
           </Button>
         </TableCell>
         <TableCell>{new Date(venta.date).toLocaleString("es-AR")}</TableCell>
-        <TableCell>{venta.client || "Cliente Ocasional"}</TableCell>
+        <TableCell>{venta.seller || "-"}</TableCell>
         <TableCell className="text-center">{venta.items?.length || 0}</TableCell>
         <TableCell>
           <Badge variant="outline" className="capitalize">
